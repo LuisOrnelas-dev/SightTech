@@ -7,6 +7,15 @@
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 */
 /* Style the header with a grey background and some padding */
+.preload {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background: url('../../Doctors symbol.gif') 50% 50% no-repeat rgb(249,249,249);
+}
 .header2 {
 	overflow: hidden;
 	background-color: #f1f1f1;
@@ -2383,9 +2392,6 @@ input, select, textarea {
 			opacity: 0.1;
 		}
 
-		#main .major h2 {
-			
-		}
 
 /* Footer */
 
@@ -2522,6 +2528,7 @@ input, select, textarea {
 
 			#main {
 				padding: 30px 0;
+				background-color: white;
 			}
 
 		/* Footer */
