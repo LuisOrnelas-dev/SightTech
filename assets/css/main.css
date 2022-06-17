@@ -7,6 +7,42 @@
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 */
 /* Style the header with a grey background and some padding */
+
+.imagenprin {
+	display: block;
+	width: 100%;
+	background-image:url("../../images/paginaweb.png");
+	background-position: center;
+	background-size:100%;
+	background-repeat: no-repeat;
+	border-radius: 0px;
+	height:400px;
+}
+
+#drs{
+	background-image:url("../../images/drs.png");
+	background-position: center;
+	background-size:80%;
+	background-repeat: no-repeat;
+	border-radius: 400px;
+	height:200px;
+}
+#nutri{
+	background-image:url("../../images/nutri.png");
+	background-position: center;
+	background-size:80%;
+	background-repeat: no-repeat;
+	border-radius: 400px;
+	height:200px;
+}
+	#diabetes{
+		background-image:url("../../images/diabetes.png");
+		background-position: center;
+		background-size:80%;
+		background-repeat: no-repeat;
+		border-radius: 400px;
+		height:200px;
+	}
 .preload {
     position: fixed;
     left: 0px;
@@ -43,8 +79,7 @@
 	display: inline;
  	margin-left: auto;
   	margin-right: auto;
-	width:100px;
-	
+	width:15%;
   }
   
   /* Change the background color on mouse-over */
@@ -70,6 +105,20 @@
   }
   /* Add media queries for responsiveness - when the screen is 500px wide or less, stack the links on top of each other */
   @media screen and (max-width: 500px) {
+	.header2 img{
+		display: inline;
+		 margin-left: auto;
+		  margin-right: auto;
+		  width:60px;
+	  }
+
+	#intro #doctor{
+		background-image:url("../../images/doctor.png");
+		background-position: center;
+		background-size:90%;
+		background-repeat: no-repeat;
+		border-radius: 0px;
+		}
 	.header a {
 	  float: none;
 	  display: block;
@@ -159,7 +208,7 @@ input, select, textarea {
 		
 	}
 
-		body.is-preload *, body.is-preload *:before, body.is-preload *:after {
+		/* body.is-preload *, body.is-preload *:before, body.is-preload *:after {
 			-moz-animation: none !important;
 			-webkit-animation: none !important;
 			-ms-animation: none !important;
@@ -168,7 +217,7 @@ input, select, textarea {
 			-webkit-transition: none !important;
 			-ms-transition: none !important;
 			transition: none !important;
-		}
+		} */
 
 	body, input, textarea, select {
 		font-family: 'Source Sans Pro';
@@ -1266,7 +1315,6 @@ input, select, textarea {
 		}
 
 		@media screen and (max-width: 736px) {
-
 			.row {
 				display: flex;
 				flex-wrap: wrap;
@@ -1765,10 +1813,6 @@ input, select, textarea {
 	.image {
 		display: inline-block;
 		outline: 0;
-	}
-	.imagenprin img {
-		display: block;
-		width: 100%;
 	}
 		.image img {
 			display: block;
@@ -2335,6 +2379,13 @@ input, select, textarea {
 			margin: 0;
 		}
 
+		#intro #doctor{
+			background-image:url("../../images/doctor.png");
+		background-position: center;
+		background-size:100%;
+		background-repeat: no-repeat;
+		border-radius: 380px;
+		}
 		#intro .middle {
 			position: relative;
 			z-index: 1;
@@ -2465,7 +2516,12 @@ input, select, textarea {
 	@media screen and (max-width: 1680px) {
 
 		/* Basic */
-
+		/* .header2 img{
+			display: inline;
+			 margin-left: auto;
+			  margin-right: auto;
+			width:100px;
+		  } */
 			body, input, textarea, select {
 				font-size: 12pt;
 			}
@@ -2564,6 +2620,16 @@ input, select, textarea {
 	}
 
 	@media screen and (max-width: 980px) {
+		#intro .informa .row {
+			background-color: white;
+		}
+		#intro #doctor{
+		background-image:url("../../images/doctor.png");
+		background-position: center;
+		background-size:40%;
+		background-repeat: no-repeat;
+		border-radius: 0px;
+		}
 
 		/* Basic */
 
@@ -2610,7 +2676,31 @@ input, select, textarea {
 						border-top: 0;
 						padding-top: 0;
 					}
-
+					
+					#drs{
+						background-image:url("../../images/drs.png");
+						background-position: center;
+						background-size:40%;
+						background-repeat: no-repeat;
+						border-radius: 0px;
+						height:200px;
+					}
+					#nutri{
+						background-image:url("../../images/nutri.png");
+						background-position: center;
+						background-size:40%;
+						background-repeat: no-repeat;
+						border-radius: 0px;
+						height:200px;
+					}
+						#diabetes{
+							background-image:url("../../images/diabetes.png");
+							background-position: center;
+							background-size:40%;
+							background-repeat: no-repeat;
+							border-radius: 0px;
+							height:200px;
+						}
 					#intro section p {
 						margin: 0;
 					}
@@ -2641,7 +2731,7 @@ input, select, textarea {
 
 		/* Nav */
 
-			#page-wrapper {
+			/* #page-wrapper {
 				-moz-backface-visibility: hidden;
 				-webkit-backface-visibility: hidden;
 				-ms-backface-visibility: hidden;
@@ -2651,7 +2741,7 @@ input, select, textarea {
 				-ms-transition: -ms-transform 0.5s ease;
 				transition: transform 0.5s ease;
 				padding-bottom: 1px;
-			}
+			} */
 
 			#titleBar {
 				-moz-backface-visibility: hidden;
@@ -2720,10 +2810,10 @@ input, select, textarea {
 				-webkit-transform: translateX(-275px);
 				-ms-transform: translateX(-275px);
 				transform: translateX(-275px);
-				-moz-transition: -moz-transform 0.5s ease;
+				/* -moz-transition: -moz-transform 0.5s ease;
 				-webkit-transition: -webkit-transform 0.5s ease;
 				-ms-transition: -ms-transform 0.5s ease;
-				transition: transform 0.5s ease;
+				transition: transform 0.5s ease; */
 				display: block;
 				height: 100%;
 				left: 0;
@@ -2809,7 +2899,13 @@ input, select, textarea {
 	@media screen and (max-width: 736px) {
 
 		/* Basic */
-
+		#intro #doctor{
+			background-image:url("../../images/doctor.png");
+			background-position: center;
+			background-size:60%;
+			background-repeat: no-repeat;
+			border-radius: 0px;
+			}
 			body, input, textarea, select {
 				font-size: 11pt;
 			}
