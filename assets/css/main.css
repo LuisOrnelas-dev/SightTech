@@ -11,7 +11,7 @@
 .imagenprin {
 	display: block;
 	width: 100%;
-	background-image:url("../../images/paginaweb.png");
+	background-image:url("../../images/paginaweb.webp");
 	background-position: center;
 	background-size:100%;
 	background-repeat: no-repeat;
@@ -20,7 +20,7 @@
 }
 
 #drs{
-	background-image:url("../../images/drs.png");
+	background-image:url("../../images/drs.webp");
 	background-position: center;
 	background-size:80%;
 	background-repeat: no-repeat;
@@ -28,7 +28,7 @@
 	height:200px;
 }
 #nutri{
-	background-image:url("../../images/nutri.png");
+	background-image:url("../../images/nutri.webp");
 	background-position: center;
 	background-size:80%;
 	background-repeat: no-repeat;
@@ -36,7 +36,7 @@
 	height:200px;
 }
 	#diabetes{
-		background-image:url("../../images/diabetes.png");
+		background-image:url("../../images/diabetes.webp");
 		background-position: center;
 		background-size:80%;
 		background-repeat: no-repeat;
@@ -50,7 +50,7 @@
     width: 100%;
     height: 100%;
     z-index: 9999;
-    background: url('../../Doctors symbol.gif') 50% 50% no-repeat rgb(249,249,249);
+    background: url('../../Doctors symbol.gif') 50% 50% no-repeat white;
 }
 .header2 {
 	overflow: hidden;
@@ -113,7 +113,7 @@
 	  }
 
 	#intro #doctor{
-		background-image:url("../../images/doctor.png");
+		background-image:url("../../images/doctor.webp");
 		background-position: center;
 		background-size:90%;
 		background-repeat: no-repeat;
@@ -2293,7 +2293,7 @@ input, select, textarea {
 /* Banner */
 
 	#banner {
-		background: #CCE8F4 url("../../images/pic01.png");
+		background: #CCE8F4 url("../../images/pic01.webp");
 		background-position: right;
 		background-size:100%;
 		background-repeat: no-repeat;
@@ -2380,7 +2380,7 @@ input, select, textarea {
 		}
 
 		#intro #doctor{
-			background-image:url("../../images/doctor.png");
+		background-image:url("../../images/doctor.webp");
 		background-position: center;
 		background-size:100%;
 		background-repeat: no-repeat;
@@ -2624,7 +2624,7 @@ input, select, textarea {
 			background-color: white;
 		}
 		#intro #doctor{
-		background-image:url("../../images/doctor.png");
+		background-image:url("../../images/doctor.webp");
 		background-position: center;
 		background-size:40%;
 		background-repeat: no-repeat;
@@ -2678,7 +2678,7 @@ input, select, textarea {
 					}
 					
 					#drs{
-						background-image:url("../../images/drs.png");
+						background-image:url("../../images/drs.webp");
 						background-position: center;
 						background-size:40%;
 						background-repeat: no-repeat;
@@ -2686,7 +2686,7 @@ input, select, textarea {
 						height:200px;
 					}
 					#nutri{
-						background-image:url("../../images/nutri.png");
+						background-image:url("../../images/nutri.webp");
 						background-position: center;
 						background-size:40%;
 						background-repeat: no-repeat;
@@ -2694,7 +2694,7 @@ input, select, textarea {
 						height:200px;
 					}
 						#diabetes{
-							background-image:url("../../images/diabetes.png");
+							background-image:url("../../images/diabetes.webp");
 							background-position: center;
 							background-size:40%;
 							background-repeat: no-repeat;
@@ -2900,7 +2900,7 @@ input, select, textarea {
 
 		/* Basic */
 		#intro #doctor{
-			background-image:url("../../images/doctor.png");
+			background-image:url("../../images/doctor.webp");
 			background-position: center;
 			background-size:60%;
 			background-repeat: no-repeat;
