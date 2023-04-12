@@ -18,6 +18,22 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 	</head>
+	<button type="button" class="collapsible"></button>
+	<div id="chat-window">
+		<div class="titlechatbot">
+		<div class="main-title">SightTech Chatbot</div><button type="button" class="minimize"></button></div>
+		<div id="chat-messages"></div>
+		<form id="chat-form">
+		  <input
+			type="text"
+			id="chat-input"
+			autocomplete="off"
+			placeholder="Escribe tu pregunta aquí"
+			required
+		  />
+		  <button type="submit">Enviar</button>
+		</form>
+	  </div>
 	<div class="preload">
 		</div>
 		
@@ -31,6 +47,7 @@
 						<div class="header2-right">
 						  <a class="active" href="index.html">Inicio</a>
 						  <a href="#intro2">Nosotros</a>
+						  <a href="#intro3">Productos</a>
 						  <a href="#footer">Contacto</a>
 						</div>
 					  </div>
@@ -48,7 +65,7 @@
 							</div>
 						</section>
 					<!-- Sabias que -->
-					<section id="intro" class="container-fluid">
+					<section id="intro" class="container-fluid">				  
 						<div class ="informa">
 						<div class="row">
 							<div class="col-6 col-12-medium">
@@ -231,7 +248,7 @@
 								<!-- Copyright -->
 									<div id="copyright">
 										<ul class="links">
-											<li>&copy; Sight Tech 2022. Todos los derechos reservados.</li>
+											<li>&copy; Sight Tech 2023. Todos los derechos reservados.</li>
 										</ul>
 									</div>
 
@@ -265,5 +282,36 @@
 					$(".preload").fadeOut("slow");
 			});
 			</script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.3/axios.min.js"></script>
+			<script src="app.js"></script>
+			<script>
+				var coll = document.getElementsByClassName("collapsible");
+				var collmin = document.getElementsByClassName("minimize");
+				var i;
+				
+				for (i = 0; i < coll.length; i++) {
+				  coll[i].addEventListener("click", function() {
+					this.classList.toggle("active");
+					var content = document.getElementById('chat-window');
+					if (content.style.display === "block") {
+					  content.style.display = "none";
+					} else {
+					  content.style.display = "block";
+					}
+				  });
+				}
+
+				for (i = 0; i < collmin.length; i++) {
+				  collmin[i].addEventListener("click", function() {
+					this.classList.toggle("active");
+					var content = document.getElementById('chat-window');
+					if (content.style.display === "block") {
+					  content.style.display = "none";
+					} else {
+					  content.style.display = "block";
+					}
+				  });
+				}
+				</script>
 	</body>
 </html>
