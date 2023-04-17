@@ -1,7 +1,6 @@
 const form = document.getElementById("chat-form");
 const input = document.getElementById("chat-input");
 const messages = document.getElementById("chat-messages");
-const apiKey = "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";
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -12,28 +11,28 @@ form.addEventListener("submit", async (e) => {
   <img src="./icons/user.png" alt="user icon"> <span>${message}</span>
   </div>`;
 
-  // Use axios library to make a POST request to the OpenAI API
-  const response = await axios.post(
-    "https://api.openai.com/v1/completions",
-    {
-      prompt: message,
-      model: "text-davinci-003",
-      temperature: 0,
-      max_tokens: 1000,
-      top_p: 1,
-      frequency_penalty: 0.0,
-      presence_penalty: 0.0,
-    },
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-    }
-  );
-  const chatbotResponse = response.data.choices[0].text;
+
+  const response = await fetch('http://localhost:4000/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            prompt: message
+        })
+    })
+
+    if (response.ok) {
+      const data = await response.json();
+      const parsedData = data.bot.trim() // trims any trailing spaces/'\n' 
+      console.log(parsedData);
+      const chatbotResponse = parsedData;
 
   messages.innerHTML += `<div class="message bot-message">
   <img src="./icons/chatbot.png" alt="bot icon"> <span>${chatbotResponse}</span>
   </div>`;
+  } else {
+      const err = await response.text();
+      console.log(" error de aqui");
+  }
 });
