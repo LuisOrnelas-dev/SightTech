@@ -140,7 +140,7 @@
 	height: 40px; /* adjust the height of the icon */
 	margin-right: 20px; /* add some margin to separate the icon from the message */
   }
-  @media only screen and (min-device-width: 320px) and (max-device-width: 400px) {
+  @media only screen and (min-device-width: 320px) and (max-device-width: 500px) {
 	#chat-window {
 	  width: 90%;
 	}
@@ -258,6 +258,9 @@
   }
   /* Add media queries for responsiveness - when the screen is 500px wide or less, stack the links on top of each other */
   @media screen and (max-width: 500px) {
+	#chat-window {
+		width: 90%;
+	  }
 	.header2 img{
 		display: inline;
 		 margin-left: auto;
