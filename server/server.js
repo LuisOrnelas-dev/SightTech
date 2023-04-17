@@ -4,6 +4,7 @@ import cors from 'cors'
 import { Configuration, OpenAIApi } from 'openai'
 
 dotenv.config()
+console.log("listo");
 console.log(process.env.OPENAI_API_KEY);
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -40,6 +41,7 @@ app.post('/', async (req, res) => {
     });
 
   } catch (error) {
+    console.error(error.body)
     console.error(error)
     res.status(500).send(error || 'Something went wrong');
   }
