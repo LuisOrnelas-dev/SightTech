@@ -1,0 +1,152 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Sight Tech</title>
+		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+		<link rel="manifest" href="/site.webmanifest">
+		<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+		<meta name="msapplication-TileColor" content="#da532c">
+		<meta name="theme-color" content="#ffffff">
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+        <script type="module" src="https://gradio.s3-us-west-2.amazonaws.com/4.22.0/gradio.js"></script>
+
+
+	</head>
+	<button type="button" class="collapsible"></button>
+	<div class="preload">
+		</div>
+		
+	<body class="homepage is-preload">
+		<div id="page-wrapper">
+
+			<!-- Header -->
+			<div class="header2">
+						<a href="index.html" class="logo">
+							<img src="images/sighttec.png" alt="" /></a>
+						<div class="header2-right">
+						  <a href="index.html">Inicio</a>
+						  <a href="#intro2">Nosotros</a>
+						  <a href="#intro3">Productos</a>
+                          <a class="active" href="demoapp.html">App</a>
+						  <a href="#footer">Contacto</a>
+						</div>
+					  </div>
+				<section id="header">
+
+                    <iframe src="https://luisornelas95-diabetic-retinopathy-detection-app.hf.space"
+                    frameborder="0"
+                    width="100%"
+                    height="850"></iframe>
+					</section>
+
+
+			<!-- Footer -->
+				<section id="footer">
+					<div class="container">
+						<div class="row">
+							<div class="col-8 col-12-medium">
+								<section>
+									<header>
+										<h2>Síguenos en nuestras redes sociales</h2>
+									</header>
+									<ul class="social">
+										<li><a class="icon brands fa-facebook-f" href="https://www.facebook.com/SightTechArtificialintelligenceforHealth"><span class="label">Facebook</span></a></li>
+										<li><a class="icon brands fa-linkedin-in" href="https://www.linkedin.com/company/sight-tech/"><span class="label">LinkedIn</span></a></li>
+									</ul>
+									<ul class="contact">
+										<li>
+											<h3>Correo</h3>
+											<p><a href="#">informacion@sighttech.com</a></p>
+										</li>
+										<li>
+											<h3>Teléfono</h3>
+											<p>+52 55 5102 4895</p>
+										</li>
+									</ul>
+								</section>
+							</div>
+							<div class="col-4 col-12-medium">
+								<section>
+									<a href="#" class="image featured"><img src="images/sighttec.png" alt="" /></a>
+									<p>
+										Somos <strong>Sight Tech</strong> una startup para la detección de la retinopatía diabética.
+										La principal causa de ceguera irreversible en el mundo.
+									</p>
+								</section>
+							</div>
+							<div class="col-12">
+
+								<!-- Copyright -->
+									<div id="copyright">
+										<ul class="links">
+											<li>&copy; Sight Tech 2023. Todos los derechos reservados.</li>
+										</ul>
+									</div>
+
+							</div>
+						</div>
+					</div>
+				</section>
+
+		</div>
+
+		<!-- Scripts -->
+			<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+			<script>
+				
+				$(document).ready(function() {
+						$('a[href^="#"]').click(function() {
+							var destino = $(this.hash);
+							if (destino.length == 0) {
+							destino = $('a[name="' + this.hash.substr(1) + '"]');
+							}
+							if (destino.length == 0) {
+							destino = $('html');
+							}
+							$('html, body').animate({ scrollTop: destino.offset().top }, 500);
+							return false;
+						});
+						});
+			</script>
+			<script>
+				$(window).load(function() {
+					$(".preload").fadeOut("slow");
+			});
+			</script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.3/axios.min.js"></script>
+			<script src="app.js"></script>
+			<script>
+				var coll = document.getElementsByClassName("collapsible");
+				var collmin = document.getElementsByClassName("minimize");
+				var i;
+				
+				for (i = 0; i < coll.length; i++) {
+				  coll[i].addEventListener("click", function() {
+					this.classList.toggle("active");
+					var content = document.getElementById('chat-window');
+					if (content.style.display === "block") {
+					  content.style.display = "none";
+					} else {
+					  content.style.display = "block";
+					}
+				  });
+				}
+
+				for (i = 0; i < collmin.length; i++) {
+				  collmin[i].addEventListener("click", function() {
+					this.classList.toggle("active");
+					var content = document.getElementById('chat-window');
+					if (content.style.display === "block") {
+					  content.style.display = "none";
+					} else {
+					  content.style.display = "block";
+					}
+				  });
+				}
+				</script>
+	</body>
+</html>
