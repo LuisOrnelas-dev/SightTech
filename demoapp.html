@@ -37,30 +37,25 @@
 					  </div>
 				<section id="header">
 
-                    <iframe id="gradio-app"
-					src="https://luisornelas95-diabetic-retinopathy-detection-app.hf.space"
-                    frameborder="0"
-					sandbox="allow-same-origin allow-scripts"
-                    width="100%"
-                    height="850"></iframe>
-					<script>
-						var iframe = document.getElementById('gradio-app');
-						
-						// Escuchar mensajes desde el iframe de Gradio
-						window.addEventListener('message', function(event) {
-							if (event.origin !== "https://luisornelas95-diabetic-retinopathy-detection-app.hf.space") return;
-							console.log('Message from Gradio app:', event.data);
-							// Aquí puedes manejar el mensaje recibido desde la app de Gradio
-						});
-				
-						// Ejemplo de cómo enviar un mensaje al iframe
-						function sendMessageToIframe() {
-							iframe.contentWindow.postMessage('Hello from main page', 'https://luisornelas95-diabetic-retinopathy-detection-app.hf.space');
-						}
-				
-						// Llama a sendMessageToIframe() cuando sea necesario, por ejemplo, en un evento de botón
-						document.getElementById('someButton').addEventListener('click', sendMessageToIframe);
-					</script>
+					<iframe id="gradio-app" src="https://sighttech.health/demoapp.html" width="100%" height="850"></iframe>
+    <script>
+        var iframe = document.getElementById('gradio-app');
+
+        // Ejemplo de cómo enviar un mensaje al iframe
+        function sendMessageToIframe() {
+            iframe.contentWindow.postMessage('Hello from main page', 'https://sighttech.health');
+        }
+
+        // Llama a sendMessageToIframe() cuando sea necesario, por ejemplo, en un evento de botón
+        document.getElementById('someButton').addEventListener('click', sendMessageToIframe);
+
+        // Escuchar mensajes desde el iframe de Gradio
+        window.addEventListener('message', function(event) {
+            if (event.origin !== "https://sighttech.health") return;
+            console.log('Message from Gradio app:', event.data);
+            // Aquí puedes manejar el mensaje recibido desde la app de Gradio
+        });
+    </script>
 					</section>
 
 
