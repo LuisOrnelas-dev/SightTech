@@ -35,6 +35,18 @@
 						  <a href="#footer">Contacto</a>
 						</div>
 					  </div>
+
+					  <div class="login-page">
+						<div class="form">
+							<form class="login-form ">
+								<h2>Ingresa al sistema</h2>
+								<input type="text" required placeholder="Username" id="user" autocomplete="off" />
+								<input  type="password" required placeholder="Password" id="pass"
+									autocomplete="off" />
+								<button type="button" onclick="ingreso()">Ingresar</button>							</form>
+						</div>
+					</div>
+
 				<section id="header">
 
                     <iframe id="gradio-app"
@@ -43,24 +55,6 @@
 					sandbox="allow-same-origin allow-scripts"
                     width="100%"
                     height="850"></iframe>
-    <script>
-        var iframe = document.getElementById('gradio-app');
-
-        // Ejemplo de cómo enviar un mensaje al iframe
-        function sendMessageToIframe() {
-            iframe.contentWindow.postMessage('Hello from main page', 'https://sighttech.health');
-        }
-
-        // Llama a sendMessageToIframe() cuando sea necesario, por ejemplo, en un evento de botón
-        document.getElementById('someButton').addEventListener('click', sendMessageToIframe);
-
-        // Escuchar mensajes desde el iframe de Gradio
-        window.addEventListener('message', function(event) {
-            if (event.origin !== "https://sighttech.health") return;
-            console.log('Message from Gradio app:', event.data);
-            // Aquí puedes manejar el mensaje recibido desde la app de Gradio
-        });
-    </script>
 					</section>
 
 
@@ -168,5 +162,24 @@
 				  });
 				}
 				</script>
+				<script >
+
+function ingreso() {
+	var log = document.getElementsByClassName("login-page");
+	var cont = document.getElementById("gradio-app");
+	var user = document.getElementById('user').value
+var pass = document.getElementById('pass').value
+  if (user == "admin" && pass == "root") {
+    alert('Acceso confirmado')
+	for (var i = 0; i < log.length; i ++) {
+    log[i].style.display = 'none';
+}
+	cont.style.display = "block";
+  } else {
+    alert('Usuario y/o Contraseña Incorrecto')
+  }
+}
+				</script>
+
 	</body>
 </html>
