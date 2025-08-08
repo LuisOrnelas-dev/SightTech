@@ -12,7 +12,7 @@ form.addEventListener("submit", async (e) => {
   </div>`;
 
 
-  const response = await fetch('https://sighttech.onrender.com', {
+  const response = await fetch('http://localhost:4000', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

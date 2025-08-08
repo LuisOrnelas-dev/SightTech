@@ -11,7 +11,10 @@ const openai = new OpenAI({
 });
 
 const app = express()
-app.use(cors())
+app.use(cors({
+  origin: ['http://localhost:8000', 'http://localhost:3000', 'http://127.0.0.1:8000', 'http://127.0.0.1:3000'],
+  credentials: true
+}))
 app.use(express.json())
 
 app.get('/', async (req, res) => {
