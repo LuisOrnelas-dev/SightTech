@@ -372,7 +372,7 @@
 	  }
 
 	#intro #doctor{
-		background-image:url("../../images/doctor.webp");
+		background-image:url("../images/doctor.webp");
 		background-position: center;
 		background-size:90%;
 		background-repeat: no-repeat;
@@ -2639,7 +2639,7 @@ input, select, textarea {
 		}
 
 		#intro #doctor{
-		background-image:url("../../images/doctor.webp");
+		background-image:url("../images/doctor.webp");
 		background-position: center;
 		background-size:100%;
 		background-repeat: no-repeat;
@@ -2883,7 +2883,7 @@ input, select, textarea {
 			background-color: white;
 		}
 		#intro #doctor{
-		background-image:url("../../images/doctor.webp");
+		background-image:url("../images/doctor.webp");
 		background-position: center;
 		background-size:40%;
 		background-repeat: no-repeat;
@@ -3159,7 +3159,7 @@ input, select, textarea {
 
 		/* Basic */
 		#intro #doctor{
-			background-image:url("../../images/doctor.webp");
+			background-image:url("../images/doctor.webp");
 			background-position: center;
 			background-size:60%;
 			background-repeat: no-repeat;

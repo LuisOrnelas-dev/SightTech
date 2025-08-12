@@ -12,7 +12,7 @@ form.addEventListener("submit", async (e) => {
   </div>`;
 
 
-  const response = await fetch('https://sighttech-new.vercel.app/api/chat', {
+  const response = await fetch('http://localhost:4000', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
