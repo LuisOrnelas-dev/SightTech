@@ -3,8 +3,8 @@
 
 const CONFIG = {
     // URLs del Backend (Vercel)
-    BACKEND_URL: 'https://sighttech-backend.vercel.app', // ← URL ACTUALIZADA
-    CHAT_API_URL: 'https://sighttech-backend.vercel.app/api/chat', // ← URL ACTUALIZADA
+    BACKEND_URL: 'https://sighttech-new.vercel.app', // ← NUEVA URL
+    CHAT_API_URL: 'https://sighttech-new.vercel.app/api/chat', // ← NUEVA URL
     
     // URLs del Frontend (GitHub Pages)
     FRONTEND_URL: 'https://tuusername.github.io/SightTech', // ← CAMBIA ESTA URL
