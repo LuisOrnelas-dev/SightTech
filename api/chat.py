@@ -4,7 +4,7 @@ import os
 from openai import OpenAI
 
 def handler(request, context):
-    """Función principal para Vercel"""
+    """Función principal para Vercel - Solo chatbot"""
     
     # Configurar CORS
     headers = {
