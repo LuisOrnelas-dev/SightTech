@@ -62,7 +62,7 @@ class ChatHandler(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         self.end_headers()
 
-# Para Vercel
+# Para Vercel - función principal
 def handler(request, context):
     return ChatHandler().do_POST()
 
