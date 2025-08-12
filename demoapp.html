@@ -129,7 +129,7 @@
                 <div class="app-frame">
                     <iframe 
                         id="gradio-app"
-                        src="http://localhost:7860"
+                        src="https://sighttech.onrender.com"
                         frameborder="0"
                         sandbox="allow-same-origin allow-scripts"
                         width="100%"
@@ -366,7 +366,7 @@
             chatInput.value = '';
 
             try {
-                const response = await fetch('http://localhost:4000', {
+                const response = await fetch('https://sighttech-chatbot.onrender.com/api/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
