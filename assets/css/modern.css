@@ -102,7 +102,7 @@ body {
 
 /* ===== HERO SECTION ===== */
 #banner {
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.9) 0%, rgba(124, 58, 237, 0.9) 100%), url('images/doctor.webp');
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.9) 0%, rgba(124, 58, 237, 0.9) 100%), url('../../images/doctor.webp');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -282,7 +282,7 @@ header.major h2::after {
 
 .service-image {
   width: 100%;
-  height: 200px;
+  height: 300px;
   border-radius: var(--border-radius-lg);
   overflow: hidden;
   margin-bottom: 1.5rem;
@@ -293,6 +293,7 @@ header.major h2::after {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center 20%;
   transition: transform 0.3s ease;
 }
 

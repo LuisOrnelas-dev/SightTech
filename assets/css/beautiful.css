@@ -173,6 +173,9 @@ body {
   display: flex;
   align-items: center;
   gap: var(--space-8);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .nav-link {
@@ -215,8 +218,8 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('images/doctor.webp') center/cover;
-  opacity: 0.1;
+  background: url('../../images/paginaweb.webp') center/cover;
+  opacity: 0.45;
   z-index: 1;
 }
 
@@ -227,7 +230,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.9) 0%, rgba(139, 92, 246, 0.9) 100%);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.8) 0%, rgba(139, 92, 246, 0.8) 100%);
   z-index: 2;
 }
 
@@ -363,7 +366,7 @@ body {
 
 .card-image {
   width: 100%;
-  height: 200px;
+  height: 300px;
   border-radius: var(--radius-lg);
   overflow: hidden;
   margin-bottom: var(--space-6);
@@ -374,6 +377,7 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center 20%;
   transition: transform 0.3s ease;
 }
 
@@ -474,7 +478,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('images/paginaweb.webp') center/cover;
+  background: url('../../images/paginaweb.webp') center/cover;
   opacity: 0.1;
 }
 
@@ -874,4 +878,70 @@ body {
 
 .pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-} 
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  
+  .nav {
+    position: static;
+    transform: none;
+    gap: var(--space-4);
+  }
+  
+  .nav-link {
+    font-size: 0.9rem;
+    padding: var(--space-1) var(--space-2);
+  }
+  
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+  
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+  
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+  
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .footer-content {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-buttons {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  
+  .btn {
+    width: 100%;
+  }
+  
+  .stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .nav {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+ 
