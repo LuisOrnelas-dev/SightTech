@@ -915,6 +915,19 @@ def init_db():
             patient_columns = [col['name'] for col in inspector.get_columns('patient')]
             print(f"📋 Columnas de la tabla patient: {patient_columns}")
             
+            # Generar datos de demo automáticamente SIEMPRE
+            try:
+                from generate_demo_data import generar_datos_demo
+                pacientes_creados, diagnosticos_creados = generar_datos_demo()
+                print(f"🎯 Datos de demo generados: {pacientes_creados} pacientes, {diagnosticos_creados} diagnósticos")
+            except Exception as e:
+                print(f"⚠️ No se pudieron generar datos de demo: {e}")
+                # Intentar generar datos básicos si falla
+                try:
+                    generar_datos_basicos()
+                except:
+                    pass
+            
         except Exception as e:
             print(f"❌ Error inicializando base de datos: {e}")
             raise e

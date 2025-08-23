@@ -355,13 +355,14 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        prompt: message
+                        message: message,
+                        context: {}
                     })
                 });
 
                 if (response.ok) {
                     const data = await response.json();
-                    addMessage(data.bot, 'bot');
+                    addMessage(data.response, 'bot');
                 } else {
                     addMessage('Lo siento, hay un problema con el servidor. Inténtalo de nuevo.', 'bot');
                 }
