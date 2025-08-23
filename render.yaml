@@ -2,18 +2,11 @@ services:
   - type: web
     name: sighttech-backend
     env: python
-    buildCommand: |
-      pip install --upgrade pip
-      pip install --no-cache-dir Flask==3.0.0
-      pip install --no-cache-dir Flask-CORS==4.0.0
-      pip install --no-cache-dir Flask-SQLAlchemy==3.1.1
-      pip install --no-cache-dir Pillow==10.4.0
-      pip install --no-cache-dir numpy==1.26.4
-      pip install --no-cache-dir reportlab==4.0.9
+    buildCommand: pip install -r requirements.txt
     startCommand: cd backend && python app.py
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.0
+        value: 3.13.4
       - key: FLASK_ENV
         value: production
       - key: PORT
