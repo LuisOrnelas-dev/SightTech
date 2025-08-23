@@ -932,6 +932,37 @@ def init_db():
             print(f"❌ Error inicializando base de datos: {e}")
             raise e
 
+def generar_datos_basicos():
+    """Generar datos básicos de demo si falla el script principal"""
+    try:
+        # Crear algunos pacientes básicos
+        pacientes = [
+            Patient(name="María González", age=65, gender="Femenino", diabetes_years=12, diabetes_type="tipo_2", glucose_level=180, hba1c=8.5),
+            Patient(name="Carlos Mendoza", age=58, gender="Masculino", diabetes_years=8, diabetes_type="tipo_2", glucose_level=220, hba1c=9.2),
+            Patient(name="Ana López", age=72, gender="Femenino", diabetes_years=15, diabetes_type="tipo_2", glucose_level=160, hba1c=7.8)
+        ]
+        
+        for paciente in pacientes:
+            db.session.add(paciente)
+        
+        db.session.commit()
+        
+        # Crear diagnósticos básicos
+        diagnosticos = [
+            Diagnosis(patient_id=1, prediction="Retinopatía diabética leve", confidence=85.5, severity=1),
+            Diagnosis(patient_id=2, prediction="Retinopatía diabética moderada", confidence=92.3, severity=2),
+            Diagnosis(patient_id=3, prediction="Sin retinopatía diabética", confidence=78.9, severity=0)
+        ]
+        
+        for diagnostico in diagnosticos:
+            db.session.add(diagnostico)
+        
+        db.session.commit()
+        print("✅ Datos básicos generados exitosamente")
+        
+    except Exception as e:
+        print(f"❌ Error generando datos básicos: {e}")
+
 if __name__ == '__main__':
     init_db()
     port = int(os.environ.get("PORT", 5002))
