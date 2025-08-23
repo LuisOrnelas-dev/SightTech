@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SightTech - Análisis de Retinopatía Diabética</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        .upload-area {
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
+        
+        .upload-area:hover, .upload-area.dragover {
+            border-color: #007bff;
+            background-color: #e3f2fd;
+        }
+        
+        .loading {
+            display: none;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .severity-high { color: #dc3545; }
+        .severity-medium { color: #ffc107; }
+        .severity-low { color: #28a745; }
+        
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin: 5px;
+        }
+        
+        .image-preview-container {
+            display: inline-block;
+            margin: 10px;
+            position: relative;
+        }
+        
+        .image-info {
+            text-align: center;
+            margin-top: 5px;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .btn-danger.btn-sm {
+            z-index: 10;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+        }
+        
+        .btn-danger.btn-sm:hover {
+            opacity: 1;
+        }
+        
+        .results-section {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-eye me-2"></i>
+                SightTech
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3">
+                    <i class="fas fa-user-md me-1"></i>
+                    <span id="userInfo">Dr. Usuario</span>
+                </span>
+                <a class="nav-link" href="dashboard.html">
+                    <i class="fas fa-chart-bar me-1"></i>Dashboard
+                </a>
+                <a class="nav-link" href="/">
+                    <i class="fas fa-home me-1"></i>Inicio
+                </a>
+                <a class="nav-link" href="#" onclick="logout()">
+                    <i class="fas fa-sign-out-alt me-1"></i>Cerrar Sesión
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0">
+                            <i class="fas fa-eye me-2"></i>
+                            Análisis de Retinopatía Diabética
+                        </h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- Formulario de Análisis -->
+                        <form id="analysisForm">
+                            <!-- Información del Paciente -->
+                            <h5 class="mb-3">
+                                <i class="fas fa-user me-2"></i>
+                                Información del Paciente
+                            </h5>
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label for="patientName" class="form-label">Nombre completo *</label>
+                                    <input type="text" class="form-control" id="patientName" name="name" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="patientAge" class="form-label">Edad *</label>
+                                    <input type="number" class="form-control" id="patientAge" name="age" min="1" max="120" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="patientGender" class="form-label">Género *</label>
+                                    <select class="form-select" id="patientGender" name="gender" required>
+                                        <option value="">Seleccionar...</option>
+                                        <option value="Masculino">Masculino</option>
+                                        <option value="Femenino">Femenino</option>
+                                        <option value="Otro">Otro</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-3">
+                                    <label for="diabetesYears" class="form-label">Años con diabetes *</label>
+                                    <input type="number" class="form-control" id="diabetesYears" name="diabetes_years" min="0" max="50" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="diabetesType" class="form-label">Tipo de diabetes *</label>
+                                    <select class="form-select" id="diabetesType" name="diabetes_type" required>
+                                        <option value="">Seleccionar...</option>
+                                        <option value="tipo_1">Diabetes Tipo 1</option>
+                                        <option value="tipo_2">Diabetes Tipo 2</option>
+                                        <option value="gestacional">Diabetes Gestacional</option>
+                                        <option value="prediabetes">Prediabetes</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="glucoseLevel" class="form-label">Glucosa en ayunas (mg/dL) *</label>
+                                    <input type="number" class="form-control" id="glucoseLevel" name="glucose_level" min="50" max="500" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="hba1c" class="form-label">HbA1c (%)</label>
+                                    <input type="number" class="form-control" id="hba1c" name="hba1c" min="4" max="15" step="0.1" placeholder="Ej: 7.2">
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-4">
+                                    <label for="bloodPressure" class="form-label">Presión arterial (mmHg) *</label>
+                                    <input type="text" class="form-control" id="bloodPressure" name="blood_pressure" placeholder="Ej: 120/80" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="cholesterol" class="form-label">Colesterol total (mg/dL)</label>
+                                    <input type="number" class="form-control" id="cholesterol" name="cholesterol" min="100" max="400" placeholder="Ej: 200">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="bmi" class="form-label">Índice de masa corporal (IMC)</label>
+                                    <input type="number" class="form-control" id="bmi" name="bmi" min="15" max="50" step="0.1" placeholder="Ej: 25.5">
+                                </div>
+                            </div>
+                            
+                            <!-- Capacidad Visual -->
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label for="visionRightEye" class="form-label">Capacidad visual - Ojo derecho</label>
+                                    <select class="form-select" id="visionRightEye" name="vision_right_eye">
+                                        <option value="">Seleccionar...</option>
+                                        <option value="20/20">20/20 (Normal)</option>
+                                        <option value="20/25">20/25</option>
+                                        <option value="20/30">20/30</option>
+                                        <option value="20/40">20/40</option>
+                                        <option value="20/50">20/50</option>
+                                        <option value="20/60">20/60</option>
+                                        <option value="20/70">20/70</option>
+                                        <option value="20/80">20/80</option>
+                                        <option value="20/100">20/100</option>
+                                        <option value="20/200">20/200</option>
+                                        <option value="20/400">20/400</option>
+                                        <option value="CF">CF (Contar dedos)</option>
+                                        <option value="HM">HM (Movimiento de manos)</option>
+                                        <option value="LP">LP (Luz y proyección)</option>
+                                        <option value="NLP">NLP (Sin percepción de luz)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="visionLeftEye" class="form-label">Capacidad visual - Ojo izquierdo</label>
+                                    <select class="form-select" id="visionLeftEye" name="vision_left_eye">
+                                        <option value="">Seleccionar...</option>
+                                        <option value="20/20">20/20 (Normal)</option>
+                                        <option value="20/25">20/25</option>
+                                        <option value="20/30">20/30</option>
+                                        <option value="20/40">20/40</option>
+                                        <option value="20/50">20/50</option>
+                                        <option value="20/60">20/60</option>
+                                        <option value="20/70">20/70</option>
+                                        <option value="20/80">20/80</option>
+                                        <option value="20/100">20/100</option>
+                                        <option value="20/200">20/200</option>
+                                        <option value="20/400">20/400</option>
+                                        <option value="CF">CF (Contar dedos)</option>
+                                        <option value="HM">HM (Movimiento de manos)</option>
+                                        <option value="LP">LP (Luz y proyección)</option>
+                                        <option value="NLP">NLP (Sin percepción de luz)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Síntomas Oculares -->
+                            <h5 class="mb-3">
+                                <i class="fas fa-eye me-2"></i>
+                                Síntomas Oculares
+                            </h5>
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="visionBorrosa" name="symptoms" value="vision_borrosa">
+                                        <label class="form-check-label" for="visionBorrosa">
+                                            Visión borrosa o fluctuante
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="manchasNegras" name="symptoms" value="manchas_negras">
+                                        <label class="form-check-label" for="manchasNegras">
+                                            Manchas negras, flotantes o telarañas
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="perdidaVision" name="symptoms" value="perdida_vision">
+                                        <label class="form-check-label" for="perdidaVision">
+                                            Pérdida súbita de visión
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="dolorOjos" name="symptoms" value="dolor_ojos">
+                                        <label class="form-check-label" for="dolorOjos">
+                                            Dolor ocular o presión
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="visionNocturna" name="symptoms" value="vision_nocturna">
+                                        <label class="form-check-label" for="visionNocturna">
+                                            Dificultad para ver de noche
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="visionColores" name="symptoms" value="vision_colores">
+                                        <label class="form-check-label" for="visionColores">
+                                            Alteración en la percepción de colores
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="visionPeriferica" name="symptoms" value="vision_periferica">
+                                        <label class="form-check-label" for="visionPeriferica">
+                                            Pérdida de visión periférica
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="ningunSintoma" name="symptoms" value="ninguno" checked>
+                                        <label class="form-check-label" for="ningunSintoma">
+                                            Ninguno de los anteriores
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Factores de Riesgo -->
+                            <h5 class="mb-3">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                Factores de Riesgo
+                            </h5>
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="hipertension" name="risk_factors" value="hipertension">
+                                        <label class="form-check-label" for="hipertension">
+                                            Hipertensión arterial (>140/90 mmHg)
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="colesterolAlto" name="risk_factors" value="colesterol_alto">
+                                        <label class="form-check-label" for="colesterolAlto">
+                                            Dislipidemia (colesterol >200 mg/dL)
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="tabaquismo" name="risk_factors" value="tabaquismo">
+                                        <label class="form-check-label" for="tabaquismo">
+                                            Tabaquismo activo o pasivo
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="obesidad" name="risk_factors" value="obesidad">
+                                        <label class="form-check-label" for="obesidad">
+                                            Obesidad (IMC >30)
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="historialFamiliar" name="risk_factors" value="historial_familiar">
+                                        <label class="form-check-label" for="historialFamiliar">
+                                            Historial familiar de retinopatía
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="embarazo" name="risk_factors" value="embarazo">
+                                        <label class="form-check-label" for="embarazo">
+                                            Embarazo (diabetes gestacional)
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="sedentarismo" name="risk_factors" value="sedentarismo">
+                                        <label class="form-check-label" for="sedentarismo">
+                                            Sedentarismo
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="ningunRiesgo" name="risk_factors" value="ninguno" checked>
+                                        <label class="form-check-label" for="ningunRiesgo">
+                                            Ninguno de los anteriores
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Historial Médico -->
+                            <h5 class="mb-3">
+                                <i class="fas fa-notes-medical me-2"></i>
+                                Historial Médico
+                            </h5>
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label for="medications" class="form-label">Medicamentos actuales</label>
+                                    <textarea class="form-control" id="medications" name="medications" rows="3" placeholder="Ej: Metformina 500mg 2x día, Insulina NPH 20U mañana"></textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="comorbidities" class="form-label">Comorbilidades</label>
+                                    <textarea class="form-control" id="comorbidities" name="comorbidities" rows="3" placeholder="Ej: Hipertensión, enfermedad renal, neuropatía"></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label for="lastEyeExam" class="form-label">Última revisión oftalmológica</label>
+                                    <select class="form-select" id="lastEyeExam" name="last_eye_exam">
+                                        <option value="">Seleccionar...</option>
+                                        <option value="menos_6_meses">Menos de 6 meses</option>
+                                        <option value="6_12_meses">6-12 meses</option>
+                                        <option value="1_2_anos">1-2 años</option>
+                                        <option value="mas_2_anos">Más de 2 años</option>
+                                        <option value="nunca">Nunca</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="previousDiagnosis" class="form-label">Diagnóstico previo de retinopatía</label>
+                                    <select class="form-select" id="previousDiagnosis" name="previous_diagnosis">
+                                        <option value="">Seleccionar...</option>
+                                        <option value="ninguno">Ninguno</option>
+                                        <option value="leve">Retinopatía leve</option>
+                                        <option value="moderada">Retinopatía moderada</option>
+                                        <option value="severa">Retinopatía severa</option>
+                                        <option value="proliferativa">Retinopatía proliferativa</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Subida de Imágenes -->
+                            <h5 class="mb-3">
+                                <i class="fas fa-camera me-2"></i>
+                                Imágenes de Fondo de Ojo
+                            </h5>
+                            <div class="mb-4">
+                                <div class="upload-area" id="uploadArea">
+                                    <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                                    <h5>Arrastra y suelta las imágenes aquí</h5>
+                                    <p class="text-muted">o haz clic para seleccionar archivos</p>
+                                    <input type="file" id="imageInput" multiple accept="image/*" style="display: none;">
+                                </div>
+                                <div id="imagePreview" class="mt-3"></div>
+                            </div>
+
+                            <!-- Botones de Acción -->
+                            <div class="text-center">
+                                <button type="button" class="btn btn-success btn-lg me-2" id="fillTestBtn">
+                                    <i class="fas fa-magic me-2"></i>
+                                    Llenar Formulario de Prueba
+                                </button>
+                                <button type="button" class="btn btn-info btn-lg me-2" id="fillMedicalBtn">
+                                    <i class="fas fa-user-md me-2"></i>
+                                    Formulario Médico Real
+                                </button>
+                                <button type="button" class="btn btn-warning btn-lg me-2" id="clearFormBtn">
+                                    <i class="fas fa-eraser me-2"></i>
+                                    Limpiar Formulario
+                                </button>
+                                                        <button type="submit" class="btn btn-primary btn-lg" id="analyzeBtn">
+                            <i class="fas fa-search me-2"></i>
+                            Analizar Imágenes
+                        </button>
+                        <div class="mt-3">
+                            <a href="dashboard.html" class="btn btn-outline-info btn-lg">
+                                <i class="fas fa-chart-bar me-2"></i>
+                                Ver Dashboard de Pacientes
+                            </a>
+                        </div>
+                            </div>
+
+                            <!-- Loading -->
+                            <div class="loading text-center mt-3" id="loading">
+                                <div class="spinner mx-auto mb-2"></div>
+                                <p>Analizando imágenes...</p>
+                            </div>
+                        </form>
+
+                        <!-- Resultados -->
+                        <div id="results" class="results-section mt-5">
+                            <h4 class="mb-4">
+                                <i class="fas fa-chart-line me-2"></i>
+                                Resultados del Análisis
+                            </h4>
+                            <div id="resultsContent"></div>
+                            
+                            <div class="text-center mt-4">
+                                <button class="btn btn-success me-2" onclick="downloadPDF()">
+                                    <i class="fas fa-download me-2"></i>
+                                    Descargar PDF
+                                </button>
+                                <button class="btn btn-secondary" onclick="newAnalysis()">
+                                    <i class="fas fa-plus me-2"></i>
+                                    Nuevo Análisis
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Verificación de autenticación
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('sighttech_logged_in');
+            const username = localStorage.getItem('sighttech_username');
+            
+            if (!isLoggedIn || !username) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            
+            // Mostrar información del usuario
+            const userInfoElement = document.getElementById('userInfo');
+            if (userInfoElement) {
+                userInfoElement.textContent = `Dr. ${username}`;
+            }
+            return true;
+        }
+
+        // Verificar autenticación al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!checkAuth()) return;
+        });
+
+        // Función de logout
+        function logout() {
+            localStorage.removeItem('sighttech_logged_in');
+            localStorage.removeItem('sighttech_username');
+            window.location.href = 'login.html';
+        }
+
+        let selectedImages = [];
+        let currentDiagnosisId = null;
+
+        // Configurar drag and drop
+        const uploadArea = document.getElementById('uploadArea');
+        const imageInput = document.getElementById('imageInput');
+
+        uploadArea.addEventListener('click', () => imageInput.click());
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = Array.from(e.dataTransfer.files);
+            handleImageFiles(files);
+        });
+
+        imageInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            handleImageFiles(files);
+        });
+
+        function handleImageFiles(files) {
+            const imageFiles = files.filter(file => file.type.startsWith('image/'));
+            selectedImages = imageFiles;
+            
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = '';
+            
+            imageFiles.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const imgContainer = document.createElement('div');
+                    imgContainer.className = 'image-preview-container';
+                    imgContainer.innerHTML = `
+                        <div class="position-relative">
+                            <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1" 
+                                    onclick="removeImage(${index})" 
+                                    title="Eliminar imagen">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <img src="${e.target.result}" class="image-preview" alt="Imagen ${index + 1}">
+                            <div class="image-info">
+                                <small class="text-muted">${file.name}</small>
+                            </div>
+                        </div>
+                    `;
+                    preview.appendChild(imgContainer);
+                };
+                reader.readAsDataURL(file);
+            });
+            
+            if (imageFiles.length > 0) {
+                showNotification(`📸 ${imageFiles.length} imagen(es) cargada(s) correctamente.`, 'success');
+            }
+        }
+        
+        function removeImage(index) {
+            if (index >= 0 && index < selectedImages.length) {
+                selectedImages.splice(index, 1);
+                updateImagePreview();
+                showNotification('🗑️ Imagen eliminada correctamente.', 'info');
+            }
+        }
+        
+        function updateImagePreview() {
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = '';
+            
+            selectedImages.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const imgContainer = document.createElement('div');
+                    imgContainer.className = 'image-preview-container';
+                    imgContainer.innerHTML = `
+                        <div class="position-relative">
+                            <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1" 
+                                    onclick="removeImage(${index})" 
+                                    title="Eliminar imagen">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <img src="${e.target.result}" class="image-preview" alt="Imagen ${index + 1}">
+                            <div class="image-info">
+                                <small class="text-muted">${file.name}</small>
+                            </div>
+                        </div>
+                    `;
+                    preview.appendChild(imgContainer);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Manejar envío del formulario
+        document.getElementById('analysisForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (selectedImages.length === 0) {
+                showNotification('📸 Por favor, selecciona al menos una imagen de fondo de ojo para el análisis.', 'error');
+                return;
+            }
+
+            // Recopilar datos del formulario
+            const formData = new FormData();
+            
+            // Agregar imágenes
+            selectedImages.forEach(image => {
+                formData.append('images', image);
+            });
+
+            // Datos del paciente
+            const patientData = {
+                name: document.getElementById('patientName').value,
+                age: document.getElementById('patientAge').value,
+                gender: document.getElementById('patientGender').value,
+                diabetes_years: document.getElementById('diabetesYears').value,
+                diabetes_type: document.getElementById('diabetesType').value,
+                glucose_level: document.getElementById('glucoseLevel').value,
+                hba1c: document.getElementById('hba1c').value,
+                blood_pressure: document.getElementById('bloodPressure').value,
+                cholesterol: document.getElementById('cholesterol').value,
+                bmi: document.getElementById('bmi').value,
+                medications: document.getElementById('medications').value,
+                comorbidities: document.getElementById('comorbidities').value,
+                last_eye_exam: document.getElementById('lastEyeExam').value,
+                previous_diagnosis: document.getElementById('previousDiagnosis').value
+            };
+
+            // Síntomas
+            const symptoms = Array.from(document.querySelectorAll('input[name="symptoms"]:checked'))
+                .map(cb => cb.value)
+                .filter(v => v !== 'ninguno');
+
+            // Factores de riesgo
+            const riskFactors = Array.from(document.querySelectorAll('input[name="risk_factors"]:checked'))
+                .map(cb => cb.value)
+                .filter(v => v !== 'ninguno');
+
+            const symptomsData = { symptoms };
+            const medicalHistoryData = { 
+                risk_factors: riskFactors,
+                diabetes_type: patientData.diabetes_type,
+                hba1c: patientData.hba1c,
+                medications: patientData.medications,
+                comorbidities: patientData.comorbidities,
+                last_eye_exam: patientData.last_eye_exam,
+                previous_diagnosis: patientData.previous_diagnosis
+            };
+
+            formData.append('patient_data', JSON.stringify(patientData));
+            formData.append('symptoms_data', JSON.stringify(symptomsData));
+            formData.append('medical_history_data', JSON.stringify(medicalHistoryData));
+
+            // Mostrar loading
+            document.getElementById('loading').classList.add('show');
+            document.getElementById('analyzeBtn').disabled = true;
+
+            try {
+                const response = await fetch('http://localhost:5002/api/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    currentDiagnosisId = result.diagnosis_id;
+                    displayResults(result.diagnosis);
+                    showNotification('✅ Análisis completado exitosamente', 'success');
+                } else {
+                    showNotification('❌ Error: ' + result.error, 'error');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('❌ Error de conexión', 'error');
+            } finally {
+                document.getElementById('loading').classList.remove('show');
+                document.getElementById('analyzeBtn').disabled = false;
+            }
+        });
+
+        function displayResults(diagnosis) {
+            const resultsContent = document.getElementById('resultsContent');
+            const severityText = ['Sin RD', 'Leve', 'Moderada', 'Severa', 'Proliferativa'][diagnosis.severity - 1] || 'Desconocida';
+            const severityClass = diagnosis.severity >= 4 ? 'high' : diagnosis.severity >= 3 ? 'medium' : 'low';
+            
+            // Determinar urgencia del caso
+            let urgencyLevel = 'normal';
+            let urgencyText = 'Revisión de rutina';
+            let urgencyColor = 'success';
+            
+            if (diagnosis.severity >= 4) {
+                urgencyLevel = 'urgente';
+                urgencyText = 'ATENCIÓN URGENTE';
+                urgencyColor = 'danger';
+            } else if (diagnosis.severity >= 3) {
+                urgencyLevel = 'prioritaria';
+                urgencyText = 'Revisión prioritaria';
+                urgencyColor = 'warning';
+            }
+
+            const html = `
+                <div class="row">
+                    <div class="col-12 mb-3">
+                        <div class="alert alert-${urgencyColor}">
+                            <i class="fas fa-${urgencyLevel === 'urgente' ? 'exclamation-triangle' : 'check-circle'} me-2"></i>
+                            <strong>${urgencyText}</strong> - Análisis completado exitosamente
+                        </div>
+                    </div>
+                    
+                    <!-- Información del Paciente -->
+                    <div class="col-12 mb-4">
+                        <h5><i class="fas fa-user me-2"></i>Información del Paciente</h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6 class="text-primary">Datos Básicos</h6>
+                                        <table class="table table-sm">
+                                            <tr><td><strong>Nombre:</strong></td><td>${diagnosis.patient_name || 'No especificado'}</td></tr>
+                                            <tr><td><strong>Edad:</strong></td><td>${diagnosis.patient_age || 'No especificado'} años</td></tr>
+                                            <tr><td><strong>Género:</strong></td><td>${diagnosis.patient_gender || 'No especificado'}</td></tr>
+                                            <tr><td><strong>Fecha de análisis:</strong></td><td>${new Date().toLocaleDateString('es-ES')}</td></tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="text-primary">Información Médica</h6>
+                                        <table class="table table-sm">
+                                            <tr><td><strong>Tiempo con diabetes:</strong></td><td>${diagnosis.patient_diabetes_years || 'No especificado'} años</td></tr>
+                                            <tr><td><strong>Tipo de diabetes:</strong></td><td>${(diagnosis.patient_diabetes_type || 'No especificado').replace('_', ' ').toUpperCase()}</td></tr>
+                                            <tr><td><strong>Glucosa:</strong></td><td>${diagnosis.patient_glucose_level || 'No especificado'} mg/dL</td></tr>
+                                            <tr><td><strong>HbA1c:</strong></td><td>${diagnosis.patient_hba1c || 'No especificado'}%</td></tr>
+                                            <tr><td><strong>Presión arterial:</strong></td><td>${diagnosis.patient_blood_pressure || 'No especificado'}</td></tr>
+                                            <tr><td><strong>Colesterol:</strong></td><td>${diagnosis.patient_cholesterol || 'No especificado'} mg/dL</td></tr>
+                                            <tr><td><strong>IMC:</strong></td><td>${diagnosis.patient_bmi || 'No especificado'} kg/m²</td></tr>
+                                            <tr><td><strong>Capacidad visual OD:</strong></td><td>${diagnosis.patient_vision_right_eye || 'No especificado'}</td></tr>
+                                            <tr><td><strong>Capacidad visual OI:</strong></td><td>${diagnosis.patient_vision_left_eye || 'No especificado'}</td></tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <h6 class="text-primary">Información Adicional</h6>
+                                        <table class="table table-sm">
+                                            <tr><td><strong>Medicamentos:</strong></td><td>${diagnosis.patient_medications || 'No especificado'}</td></tr>
+                                            <tr><td><strong>Comorbilidades:</strong></td><td>${diagnosis.patient_comorbidities || 'No especificado'}</td></tr>
+                                            <tr><td><strong>Último examen ocular:</strong></td><td>${(diagnosis.patient_last_eye_exam || 'No especificado').replace('_', ' ').toUpperCase()}</td></tr>
+                                            <tr><td><strong>Diagnóstico previo:</strong></td><td>${(diagnosis.patient_previous_diagnosis || 'No especificado').replace('_', ' ').toUpperCase()}</td></tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Imágenes Analizadas -->
+                    <div class="col-12 mb-4">
+                        <h5><i class="fas fa-images me-2"></i>Imágenes Analizadas</h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <p><strong>Total de imágenes:</strong> ${diagnosis.images_analyzed || 'No especificado'}</p>
+                                <p><strong>Tipo de análisis:</strong> Detección automática de retinopatía diabética mediante inteligencia artificial</p>
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Las imágenes han sido procesadas por nuestro sistema de IA para detectar signos de retinopatía diabética.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <h5><i class="fas fa-stethoscope me-2"></i>Diagnóstico Clínico</h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title text-primary">${diagnosis.prediction}</h6>
+                                <p class="card-text">
+                                    <strong>Nivel de severidad:</strong> 
+                                    <span class="badge bg-${severityClass === 'high' ? 'danger' : severityClass === 'medium' ? 'warning' : 'success'} fs-6">${severityText}</span>
+                                </p>
+                                <p class="card-text">
+                                    <strong>Confianza del modelo:</strong> 
+                                    <span class="text-${diagnosis.confidence > 90 ? 'success' : diagnosis.confidence > 75 ? 'warning' : 'danger'}">${diagnosis.confidence.toFixed(1)}%</span>
+                                </p>
+                                <p class="card-text">
+                                    <strong>Imágenes analizadas:</strong> ${diagnosis.images_analyzed}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <h5><i class="fas fa-calendar-check me-2"></i>Próximos Pasos</h5>
+                        <div class="card">
+                            <div class="card-body">
+                                ${diagnosis.severity >= 4 ? `
+                                    <div class="alert alert-danger mb-3">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        <strong>Consulta oftalmológica URGENTE</strong><br>
+                                        En las próximas 24-48 horas
+                                    </div>
+                                ` : diagnosis.severity >= 3 ? `
+                                    <div class="alert alert-warning mb-3">
+                                        <i class="fas fa-clock me-2"></i>
+                                        <strong>Consulta oftalmológica PRIORITARIA</strong><br>
+                                        En las próximas 1-2 semanas
+                                    </div>
+                                ` : `
+                                    <div class="alert alert-info mb-3">
+                                        <i class="fas fa-calendar me-2"></i>
+                                        <strong>Revisión oftalmológica de rutina</strong><br>
+                                        Según recomendación médica
+                                    </div>
+                                `}
+                                <p><strong>Próxima revisión:</strong> ${getNextReviewDate(diagnosis.severity)}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <h5><i class="fas fa-chart-line me-2"></i>Factores de Riesgo</h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="mb-2">
+                                    <strong>Control glucémico:</strong>
+                                    <span class="badge bg-${diagnosis.severity >= 3 ? 'danger' : 'success'}">${diagnosis.severity >= 3 ? 'Requiere optimización' : 'Adecuado'}</span>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Riesgo de progresión:</strong>
+                                    <span class="badge bg-${diagnosis.severity >= 4 ? 'danger' : diagnosis.severity >= 2 ? 'warning' : 'success'}">${getProgressionRisk(diagnosis.severity)}</span>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Necesita tratamiento:</strong>
+                                    <span class="badge bg-${diagnosis.severity >= 3 ? 'danger' : 'secondary'}">${diagnosis.severity >= 3 ? 'Sí' : 'No'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-12 mt-4">
+                        <h5><i class="fas fa-clipboard-list me-2"></i>Recomendaciones Médicas Inteligentes</h5>
+                        <div class="alert alert-info mb-3">
+                            <i class="fas fa-brain me-2"></i>
+                            <strong>Sistema de Riesgo Inteligente:</strong> Las recomendaciones se adaptan automáticamente según el perfil de riesgo del paciente.
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <ul class="list-group list-group-flush">
+                                            ${diagnosis.recommendations.map(rec => {
+                                                let className = 'list-group-item';
+                                                if (rec.includes('🚨')) className += ' list-group-item-danger';
+                                                else if (rec.includes('⚠️')) className += ' list-group-item-warning';
+                                                else if (rec.includes('📋')) className += ' list-group-item-info';
+                                                else if (rec.includes('✅')) className += ' list-group-item-success';
+                                                else if (rec.includes('💡')) className += ' list-group-item-primary';
+                                                return `<li class="${className}">${rec}</li>`;
+                                            }).join('')}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-12 mt-3">
+                        <div class="alert alert-warning">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Nota médica importante:</strong> Este diagnóstico es generado por inteligencia artificial y debe ser validado por un oftalmólogo especialista. Los resultados son informativos y no reemplazan la evaluación médica profesional.
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            resultsContent.innerHTML = html;
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function getNextReviewDate(severity) {
+            switch(severity) {
+                case 1: return '6-12 meses';
+                case 2: return '3-6 meses';
+                case 3: return '1-2 meses';
+                case 4: return '2-4 semanas';
+                case 5: return '1-2 semanas';
+                default: return 'Según recomendación médica';
+            }
+        }
+        
+        function getProgressionRisk(severity) {
+            switch(severity) {
+                case 1: return 'Bajo';
+                case 2: return 'Moderado';
+                case 3: return 'Alto';
+                case 4: return 'Muy alto';
+                case 5: return 'Crítico';
+                default: return 'Desconocido';
+            }
+        }
+
+        function downloadPDF() {
+            if (currentDiagnosisId) {
+                window.open(`http://localhost:5002/api/download-pdf/${currentDiagnosisId}`, '_blank');
+            }
+        }
+
+        function newAnalysis() {
+            document.getElementById('analysisForm').reset();
+            document.getElementById('imagePreview').innerHTML = '';
+            document.getElementById('results').style.display = 'none';
+            selectedImages = [];
+            currentDiagnosisId = null;
+        }
+
+        function showNotification(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type === 'error' ? 'danger' : 'success'} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+
+        // Función para llenar formulario de prueba
+        function fillTestForm() {
+            // Datos del paciente
+            document.getElementById('patientName').value = 'María González López';
+            document.getElementById('patientAge').value = '58';
+            document.getElementById('patientGender').value = 'Femenino';
+            
+            // Información médica
+            document.getElementById('diabetesYears').value = '12';
+            document.getElementById('diabetesType').value = 'tipo_2';
+            document.getElementById('glucoseLevel').value = '180';
+            document.getElementById('hba1c').value = '8.5';
+            document.getElementById('bloodPressure').value = '145/95';
+            document.getElementById('cholesterol').value = '240';
+            document.getElementById('bmi').value = '32.5';
+            
+            // Capacidad visual
+            document.getElementById('visionRightEye').value = '20/40';
+            document.getElementById('visionLeftEye').value = '20/50';
+            
+            // Historial médico
+            document.getElementById('medications').value = 'Metformina 850mg 2x día, Glimepirida 2mg 1x día, Losartán 50mg 1x día';
+            document.getElementById('comorbidities').value = 'Hipertensión arterial, dislipidemia, obesidad';
+            document.getElementById('lastEyeExam').value = 'mas_2_anos';
+            document.getElementById('previousDiagnosis').value = 'ninguno';
+            
+            // Síntomas (desmarcar "ninguno" y marcar síntomas específicos)
+            document.getElementById('ningunSintoma').checked = false;
+            document.getElementById('visionBorrosa').checked = true;
+            document.getElementById('manchasNegras').checked = true;
+            document.getElementById('visionNocturna').checked = true;
+            
+            // Factores de riesgo (desmarcar "ninguno" y marcar factores específicos)
+            document.getElementById('ningunRiesgo').checked = false;
+            document.getElementById('hipertension').checked = true;
+            document.getElementById('colesterolAlto').checked = true;
+            document.getElementById('obesidad').checked = true;
+            
+            showNotification('✅ Formulario llenado con datos de prueba. Solo falta subir las imágenes.', 'success');
+        }
+
+        // Función para formulario médico real
+                    function fillMedicalForm() {
+                // Mostrar modal para seleccionar tipo de caso
+                const modal = document.createElement('div');
+                modal.className = 'modal fade';
+                modal.id = 'medicalCaseModal';
+                modal.setAttribute('tabindex', '-1');
+                modal.setAttribute('aria-labelledby', 'medicalCaseModalLabel');
+                modal.setAttribute('aria-hidden', 'false');
+                modal.innerHTML = `
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="medicalCaseModalLabel">Seleccionar Caso Médico</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Selecciona el tipo de caso que quieres demostrar:</p>
+                                <div class="d-grid gap-2">
+                                    <button type="button" class="btn btn-outline-primary" onclick="fillCase('control')" data-bs-dismiss="modal">
+                                        <strong>Caso 1:</strong> Paciente con diabetes - Control regular
+                                        <br><small>45-55 años, HbA1c 7.0-8.0%, sin retinopatía previa</small>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-warning" onclick="fillCase('leve')" data-bs-dismiss="modal">
+                                        <strong>Caso 2:</strong> Paciente con retinopatía leve-moderada
+                                        <br><small>50-65 años, HbA1c 8.0-9.0%, con sospecha de retinopatía</small>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger" onclick="fillCase('avanzada')" data-bs-dismiss="modal">
+                                        <strong>Caso 3:</strong> Paciente con retinopatía avanzada
+                                        <br><small>55-70 años, HbA1c >9.0%, con retinopatía conocida</small>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                
+                const modalInstance = new bootstrap.Modal(modal);
+                modalInstance.show();
+                
+                // Limpiar modal después de cerrar
+                modal.addEventListener('hidden.bs.modal', function() {
+                    if (document.body.contains(modal)) {
+                        document.body.removeChild(modal);
+                    }
+                });
+            }
+
+        function fillCase(caseType) {
+            // El modal se cierra automáticamente con data-bs-dismiss="modal"
+            
+            switch(caseType) {
+                case 'control':
+                    // Caso 1: Paciente con diabetes - Control regular
+                    document.getElementById('patientName').value = 'Dr. Carlos Mendoza';
+                    document.getElementById('patientAge').value = '48';
+                    document.getElementById('patientGender').value = 'Masculino';
+                    document.getElementById('diabetesYears').value = '6';
+                    document.getElementById('diabetesType').value = 'tipo_2';
+                    document.getElementById('glucoseLevel').value = '145';
+                    document.getElementById('hba1c').value = '7.2';
+                    document.getElementById('bloodPressure').value = '130/85';
+                    document.getElementById('cholesterol').value = '210';
+                    document.getElementById('bmi').value = '27.5';
+                    document.getElementById('visionRightEye').value = '20/25';
+                    document.getElementById('visionLeftEye').value = '20/30';
+                    document.getElementById('medications').value = 'Metformina 500mg 2x día';
+                    document.getElementById('comorbidities').value = 'Hipertensión leve';
+                    document.getElementById('lastEyeExam').value = 'hace_1_ano';
+                    document.getElementById('previousDiagnosis').value = 'ninguno';
+                    // Síntomas y riesgos
+                    document.getElementById('ningunSintoma').checked = true;
+                    document.getElementById('visionBorrosa').checked = false;
+                    document.getElementById('manchasNegras').checked = false;
+                    document.getElementById('visionNocturna').checked = false;
+                    document.getElementById('ningunRiesgo').checked = false;
+                    document.getElementById('hipertension').checked = true;
+                    document.getElementById('colesterolAlto').checked = false;
+                    document.getElementById('obesidad').checked = false;
+                    showNotification('✅ Caso 1: Paciente con diabetes - Control regular. Listo para análisis.', 'info');
+                    break;
+                    
+                case 'leve':
+                    // Caso 2: Paciente con retinopatía leve-moderada
+                    document.getElementById('patientName').value = 'Sra. Ana Rodríguez';
+                    document.getElementById('patientAge').value = '58';
+                    document.getElementById('patientGender').value = 'Femenino';
+                    document.getElementById('diabetesYears').value = '12';
+                    document.getElementById('diabetesType').value = 'tipo_2';
+                    document.getElementById('glucoseLevel').value = '185';
+                    document.getElementById('hba1c').value = '8.5';
+                    document.getElementById('bloodPressure').value = '150/95';
+                    document.getElementById('cholesterol').value = '280';
+                    document.getElementById('bmi').value = '32.0';
+                    document.getElementById('visionRightEye').value = '20/50';
+                    document.getElementById('visionLeftEye').value = '20/40';
+                    document.getElementById('medications').value = 'Metformina 850mg 2x día, Glimepirida 2mg 1x día, Losartán 50mg 1x día';
+                    document.getElementById('comorbidities').value = 'Hipertensión arterial, dislipidemia';
+                    document.getElementById('lastEyeExam').value = 'mas_2_anos';
+                    document.getElementById('previousDiagnosis').value = 'retinopatia_leve';
+                    // Síntomas y riesgos
+                    document.getElementById('ningunSintoma').checked = false;
+                    document.getElementById('visionBorrosa').checked = true;
+                    document.getElementById('manchasNegras').checked = true;
+                    document.getElementById('visionNocturna').checked = false;
+                    document.getElementById('ningunRiesgo').checked = false;
+                    document.getElementById('hipertension').checked = true;
+                    document.getElementById('colesterolAlto').checked = true;
+                    document.getElementById('obesidad').checked = true;
+                    showNotification('✅ Caso 2: Paciente con retinopatía leve-moderada. Listo para análisis.', 'warning');
+                    break;
+                    
+                case 'avanzada':
+                    // Caso 3: Paciente con retinopatía avanzada
+                    document.getElementById('patientName').value = 'Sr. Roberto Silva';
+                    document.getElementById('patientAge').value = '65';
+                    document.getElementById('patientGender').value = 'Masculino';
+                    document.getElementById('diabetesYears').value = '18';
+                    document.getElementById('diabetesType').value = 'tipo_2';
+                    document.getElementById('glucoseLevel').value = '250';
+                    document.getElementById('hba1c').value = '9.8';
+                    document.getElementById('bloodPressure').value = '160/100';
+                    document.getElementById('cholesterol').value = '320';
+                    document.getElementById('bmi').value = '35.5';
+                    document.getElementById('visionRightEye').value = '20/200';
+                    document.getElementById('visionLeftEye').value = '20/100';
+                    document.getElementById('medications').value = 'Insulina NPH 20U 2x día, Metformina 1000mg 2x día, Amlodipino 10mg 1x día';
+                    document.getElementById('comorbidities').value = 'Hipertensión arterial severa, dislipidemia, obesidad, nefropatía';
+                    document.getElementById('lastEyeExam').value = 'nunca';
+                    document.getElementById('previousDiagnosis').value = 'ninguno';
+                    // Síntomas y riesgos
+                    document.getElementById('ningunSintoma').checked = false;
+                    document.getElementById('visionBorrosa').checked = true;
+                    document.getElementById('manchasNegras').checked = true;
+                    document.getElementById('visionNocturna').checked = true;
+                    document.getElementById('ningunRiesgo').checked = false;
+                    document.getElementById('hipertension').checked = true;
+                    document.getElementById('colesterolAlto').checked = true;
+                    document.getElementById('obesidad').checked = true;
+                    showNotification('⚠️ Caso 3: Paciente con retinopatía avanzada. Requiere atención urgente.', 'danger');
+                    break;
+            }
+        }
+        
+        // Función para limpiar formulario
+        function clearForm() {
+            document.getElementById('analysisForm').reset();
+            document.getElementById('imagePreview').innerHTML = '';
+            selectedImages = [];
+            // Limpiar también el input de archivos
+            document.getElementById('imageInput').value = '';
+            showNotification('🧹 Formulario limpiado correctamente.', 'info');
+        }
+        
+        // Event listeners para los botones
+        document.getElementById('fillTestBtn').addEventListener('click', fillTestForm);
+        document.getElementById('fillMedicalBtn').addEventListener('click', fillMedicalForm);
+        document.getElementById('clearFormBtn').addEventListener('click', clearForm);
+        
+        // Manejar checkboxes exclusivos
+        document.querySelectorAll('input[name="symptoms"]').forEach(cb => {
+            cb.addEventListener('change', function() {
+                if (this.value === 'ninguno' && this.checked) {
+                    document.querySelectorAll('input[name="symptoms"]:not([value="ninguno"])').forEach(c => c.checked = false);
+                } else if (this.value !== 'ninguno' && this.checked) {
+                    document.getElementById('ningunSintoma').checked = false;
+                }
+            });
+        });
+
+        document.querySelectorAll('input[name="risk_factors"]').forEach(cb => {
+            cb.addEventListener('change', function() {
+                if (this.value === 'ninguno' && this.checked) {
+                    document.querySelectorAll('input[name="risk_factors"]:not([value="ninguno"])').forEach(c => c.checked = false);
+                } else if (this.value !== 'ninguno' && this.checked) {
+                    document.getElementById('ningunRiesgo').checked = false;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
