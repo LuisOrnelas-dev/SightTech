@@ -726,6 +726,29 @@ def get_patients():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/generate-demo-data', methods=['POST'])
+def generate_demo_data():
+    """Endpoint para generar datos de demostración"""
+    try:
+        from generate_demo_data import generar_datos_demo
+        
+        # Generar datos de demo
+        pacientes_creados, diagnosticos_creados = generar_datos_demo()
+        
+        return jsonify({
+            'success': True,
+            'message': f'Datos de demo generados exitosamente',
+            'pacientes_creados': pacientes_creados,
+            'diagnosticos_creados': diagnosticos_creados
+        })
+        
+    except Exception as e:
+        print(f"❌ Error generando datos de demo: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 @app.route('/api/chat', methods=['POST'])
 def chat_with_ai():
     """Endpoint para el chatbot con IA"""
