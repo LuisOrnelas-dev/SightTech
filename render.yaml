@@ -7,7 +7,7 @@ services:
       pip install --no-cache-dir Flask==3.0.0
       pip install --no-cache-dir Flask-CORS==4.0.0
       pip install --no-cache-dir Flask-SQLAlchemy==3.1.1
-      pip install --no-cache-dir Pillow==10.2.0
+      pip install --no-cache-dir Pillow==10.4.0
       pip install --no-cache-dir numpy==1.26.4
       pip install --no-cache-dir reportlab==4.0.9
     startCommand: cd backend && python app.py
