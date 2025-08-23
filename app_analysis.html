@@ -1173,44 +1173,40 @@
     </script>
 </body>
 </html>
+</html>
+    <script src="chatbot.js"></script>
     <!-- Chatbot Widget -->
-    <div id="chatbot-widget" class="chatbot-container">
-        <!-- Botón flotante del chatbot -->
-        <div id="chatbot-toggle" class="chatbot-toggle">
-            <i class="fas fa-comments"></i>
+    <button id="chatbot-toggle">
+        <i class="fas fa-comments"></i>
+    </button>
+    
+    <div id="chatbot-window">
+        <div id="chatbot-header">
+            <h3><i class="fas fa-robot me-2"></i>Asistente Médico</h3>
+            <button id="chatbot-close">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
         
-        <!-- Ventana del chat -->
-        <div id="chatbot-window" class="chatbot-window" style="display: none;">
-            <div class="chatbot-header">
-                <div class="chatbot-title">
-                    <i class="fas fa-robot me-2"></i>
-                    Asistente Médico
-                </div>
-                <button id="chatbot-close" class="chatbot-close">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <div class="chatbot-messages" id="chatbot-messages">
-                <div class="message bot-message">
-                    <div class="message-content">
-                        <i class="fas fa-robot message-avatar"></i>
-                        <div class="message-text">
-                            ¡Hola! Soy el asistente médico de SightTech. ¿En qué puedo ayudarte hoy?
-                        </div>
+        <div id="chatbot-messages">
+            <div class="message bot-message">
+                <div class="message-content">
+                    <i class="fas fa-robot message-avatar"></i>
+                    <div class="message-text">
+                        ¡Hola! Soy el asistente médico de SightTech. ¿En qué puedo ayudarte hoy?
                     </div>
                 </div>
             </div>
-            
-            <div class="chatbot-input">
-                <input type="text" id="chatbot-input-field" placeholder="Escribe tu pregunta..." maxlength="500">
-                <button id="chatbot-send">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
+        </div>
+        
+        <div id="chatbot-input">
+            <input type="text" id="chatbot-input-field" placeholder="Escribe tu pregunta..." maxlength="500">
+            <button id="chatbot-send">
+                <i class="fas fa-paper-plane"></i>
+            </button>
         </div>
     </div>
+    
+    <script src="chatbot.js"></script>
 </body>
 </html>
-    <script src="chatbot.js"></script>
