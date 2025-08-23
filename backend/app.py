@@ -726,6 +726,154 @@ def get_patients():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/chat', methods=['POST'])
+def chat_with_ai():
+    """Endpoint para el chatbot con IA"""
+    try:
+        data = request.get_json()
+        message = data.get('message', '').strip()
+        context = data.get('context', {})
+        
+        if not message:
+            return jsonify({'error': 'Mensaje requerido'}), 400
+        
+        # Respuestas predefinidas para casos médicos específicos
+        medical_responses = {
+            'retinopatía': {
+                'keywords': ['retinopatía', 'retinopatia', 'retina', 'ojo', 'vista', 'visión'],
+                'response': """La retinopatía diabética es una complicación de la diabetes que afecta los vasos sanguíneos de la retina. 
+
+**Síntomas principales:**
+• Visión borrosa o fluctuante
+• Manchas negras o flotantes
+• Dificultad para ver de noche
+• Pérdida gradual de la visión
+
+**Factores de riesgo:**
+• Diabetes mal controlada
+• Hipertensión arterial
+• Colesterol alto
+• Tiempo prolongado con diabetes
+
+**Recomendaciones:**
+• Control estricto de glucosa
+• Revisión oftalmológica anual
+• Control de presión arterial
+• Dieta saludable y ejercicio
+
+¿Te gustaría saber más sobre algún aspecto específico?"""
+            },
+            'diabetes': {
+                'keywords': ['diabetes', 'glucosa', 'azúcar', 'insulina', 'hb1ac'],
+                'response': """La diabetes es una enfermedad crónica que afecta cómo el cuerpo procesa la glucosa.
+
+**Tipos principales:**
+• **Tipo 1:** El cuerpo no produce insulina
+• **Tipo 2:** El cuerpo no usa la insulina eficazmente
+• **Gestacional:** Durante el embarazo
+
+**Control de la diabetes:**
+• Monitoreo regular de glucosa
+• Dieta balanceada
+• Ejercicio regular
+• Medicación según prescripción
+• Revisiones médicas periódicas
+
+**Complicaciones:**
+• Retinopatía diabética
+• Nefropatía
+• Neuropatía
+• Enfermedad cardiovascular
+
+¿Necesitas información sobre algún aspecto específico?"""
+            },
+            'sistema': {
+                'keywords': ['sistema', 'usar', 'cómo', 'como', 'funciona', 'análisis'],
+                'response': """**Cómo usar SightTech para análisis de retinopatía:**
+
+1. **Llenar formulario:** Completa la información del paciente
+2. **Subir imágenes:** Arrastra o selecciona imágenes del fondo de ojo
+3. **Analizar:** Haz clic en "Analizar Imágenes"
+4. **Revisar resultados:** El sistema mostrará el diagnóstico
+5. **Descargar PDF:** Genera un reporte médico completo
+
+**Requisitos de imágenes:**
+• Formato: JPG, PNG
+• Calidad: Buena resolución
+• Área: Fondo de ojo completo
+• Cantidad: 1-3 imágenes por ojo
+
+**Interpretación de resultados:**
+• **Nivel 0:** Sin retinopatía
+• **Nivel 1:** Retinopatía leve
+• **Nivel 2:** Retinopatía moderada
+• **Nivel 3:** Retinopatía severa
+• **Nivel 4:** Retinopatía proliferativa
+
+¿Tienes alguna pregunta específica sobre el uso del sistema?"""
+            },
+            'síntomas': {
+                'keywords': ['síntoma', 'sintoma', 'dolor', 'molestia', 'problema'],
+                'response': """**Síntomas de retinopatía diabética:**
+
+**Síntomas tempranos:**
+• Visión borrosa leve
+• Dificultad para leer
+• Cambios en la percepción de colores
+
+**Síntomas avanzados:**
+• Manchas negras o flotantes
+• Visión nocturna deteriorada
+• Pérdida súbita de visión
+• Dolor en los ojos
+
+**Cuándo buscar atención médica:**
+• Cambios repentinos en la visión
+• Dolor ocular
+• Aparición de manchas
+• Visión borrosa persistente
+
+**Importante:** Los síntomas pueden no aparecer hasta etapas avanzadas, por eso es crucial el control regular.
+
+¿Experimentas alguno de estos síntomas?"""
+            }
+        }
+        
+        # Buscar respuesta basada en palabras clave
+        message_lower = message.lower()
+        for category, info in medical_responses.items():
+            if any(keyword in message_lower for keyword in info['keywords']):
+                return jsonify({
+                    'response': info['response'],
+                    'category': category,
+                    'timestamp': datetime.now().isoformat()
+                })
+        
+        # Respuesta general si no se encuentra categoría específica
+        general_response = """Hola, soy el asistente médico de SightTech. Puedo ayudarte con:
+
+• **Información sobre retinopatía diabética**
+• **Preguntas sobre diabetes**
+• **Cómo usar el sistema SightTech**
+• **Síntomas y signos de alerta**
+• **Recomendaciones médicas generales**
+
+¿En qué puedo ayudarte específicamente?"""
+        
+        return jsonify({
+            'response': general_response,
+            'category': 'general',
+            'timestamp': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        print(f"❌ Error en chatbot: {e}")
+        return jsonify({
+            'response': 'Lo siento, tuve un problema procesando tu mensaje. ¿Podrías intentar de nuevo?',
+            'error': str(e),
+            'timestamp': datetime.now().isoformat()
+        }), 500
+
 # Inicializar base de datos
 def init_db():
     with app.app_context():
@@ -750,4 +898,5 @@ def init_db():
 
 if __name__ == '__main__':
     init_db()
-    app.run(debug=True, port=5002) 
+    port = int(os.environ.get("PORT", 5002))
+    app.run(debug=False, host="0.0.0.0", port=port) 

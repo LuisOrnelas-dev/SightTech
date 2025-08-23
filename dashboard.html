@@ -226,7 +226,7 @@
         // Cargar datos del dashboard
         async function loadDashboardData() {
             try {
-                const response = await fetch('http://localhost:5002/api/dashboard');
+                const response = await fetch('https://sighttech-backend.onrender.com/api/dashboard');
                 const data = await response.json();
                 
                 updateStats(data);
@@ -314,7 +314,7 @@
 
         // Descargar PDF del paciente
         function downloadPatientPDF(diagnosisId) {
-            window.open(`http://localhost:5002/api/download-pdf/${diagnosisId}`, '_blank');
+            window.open(`https://sighttech-backend.onrender.com/api/download-pdf/${diagnosisId}`, '_blank');
         }
 
         // Buscar pacientes
