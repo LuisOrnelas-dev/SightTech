@@ -73,9 +73,7 @@
                 <a class="nav-link" href="app_analysis.html">
                     <i class="fas fa-plus me-1"></i>Nuevo Análisis
                 </a>
-                <button class="btn btn-warning btn-sm" onclick="generateDemoData()">
-                    <i class="fas fa-database me-1"></i>Generar Demo
-                </button>
+
                 <a class="nav-link" href="/">
                     <i class="fas fa-home me-1"></i>Inicio
                 </a>
@@ -361,9 +359,32 @@
             }
         }
 
+        // Generar datos de demo
+        async function generateDemoData() {
+            try {
+                const response = await fetch('https://sighttech-backend.onrender.com/api/generate-demo-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`✅ Datos de demo generados exitosamente!\n\nPacientes creados: ${data.pacientes_creados}\nDiagnósticos creados: ${data.diagnosticos_creados}`);
+                    loadDashboardData();
+                } else {
+                    alert(`❌ Error: ${data.error}`);
+                }
+            } catch (error) {
+                console.error('Error generando datos de demo:', error);
+                alert('❌ Error al generar datos de demo');
+            }
+        }
+
         // Mostrar error
         function showError(message) {
-            // Implementar notificación de error
             console.error(message);
         }
     </script>

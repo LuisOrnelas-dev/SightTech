@@ -16,7 +16,7 @@ from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=['https://sighttechfrontend.onrender.com', 'http://localhost:5001', 'http://localhost:3000'])
 
 # Configuración de la base de datos
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sighttech.db'
@@ -895,29 +895,6 @@ def chat_with_ai():
             'response': 'Lo siento, tuve un problema procesando tu mensaje. ¿Podrías intentar de nuevo?',
             'error': str(e),
             'timestamp': datetime.now().isoformat()
-        }), 500
-
-@app.route('/api/generate-demo-data', methods=['POST'])
-def generate_demo_data():
-    """Endpoint para generar datos de demostración"""
-    try:
-        from generate_demo_data import generar_datos_demo
-        
-        # Generar datos de demo
-        pacientes_creados, diagnosticos_creados = generar_datos_demo()
-        
-        return jsonify({
-            'success': True,
-            'message': f'Datos de demo generados exitosamente',
-            'pacientes_creados': pacientes_creados,
-            'diagnosticos_creados': diagnosticos_creados
-        })
-        
-    except Exception as e:
-        print(f"❌ Error generando datos de demo: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
         }), 500
 
 # Inicializar base de datos
