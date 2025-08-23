@@ -699,6 +699,7 @@ def dashboard():
                 {
                     'id': d.id,
                     'patient_name': d.patient.name,
+                    'patient_age': d.patient.age,
                     'prediction': d.prediction,
                     'confidence': d.confidence,
                     'created_at': d.created_at.isoformat()
