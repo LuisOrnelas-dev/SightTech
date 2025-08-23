@@ -2,7 +2,7 @@ services:
   - type: web
     name: sighttech-backend
     env: python
-    buildCommand: chmod +x install_dependencies.sh && ./install_dependencies.sh
+    buildCommand: pip install Flask==3.0.0 Flask-CORS==4.0.0 Flask-SQLAlchemy==3.1.1 Pillow==10.2.0 numpy==1.26.4 reportlab==4.0.9
     startCommand: cd backend && python app.py
     envVars:
       - key: PYTHON_VERSION
