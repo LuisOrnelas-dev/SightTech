@@ -897,6 +897,29 @@ def chat_with_ai():
             'timestamp': datetime.now().isoformat()
         }), 500
 
+@app.route('/api/generate-demo-data', methods=['POST'])
+def generate_demo_data():
+    """Endpoint para generar datos de demostración"""
+    try:
+        from generate_demo_data import generar_datos_demo
+        
+        # Generar datos de demo
+        pacientes_creados, diagnosticos_creados = generar_datos_demo()
+        
+        return jsonify({
+            'success': True,
+            'message': f'Datos de demo generados exitosamente',
+            'pacientes_creados': pacientes_creados,
+            'diagnosticos_creados': diagnosticos_creados
+        })
+        
+    except Exception as e:
+        print(f"❌ Error generando datos de demo: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 # Inicializar base de datos
 def init_db():
     with app.app_context():
