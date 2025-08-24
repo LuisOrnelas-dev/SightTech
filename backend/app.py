@@ -16,7 +16,7 @@ from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
 
 app = Flask(__name__)
-CORS(app, origins=['https://sighttechfrontend.onrender.com', 'http://localhost:5001', 'http://localhost:3000'])
+CORS(app, origins=['https://sighttech.mx', 'http://localhost:5001', 'http://localhost:3000'])
 
 # Configuración de la base de datos
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sighttech.db'

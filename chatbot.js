@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
             chatbotInput.value = '';
             
             // Send to backend
-            fetch('https://sighttech-backend.onrender.com/api/chat', {
+            fetch('https://api.sighttech.mx/api/chat', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

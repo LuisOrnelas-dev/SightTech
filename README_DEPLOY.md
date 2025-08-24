@@ -37,7 +37,7 @@ En el backend, agrega:
 
 ### 4. **URLs Finales**
 - **Frontend**: `https://sighttech-frontend.onrender.com`
-- **Backend**: `https://sighttech-backend.onrender.com`
+- **Backend**: `https://api.sighttech.mx`
 
 ## 🎯 Para Demo UNITEC
 

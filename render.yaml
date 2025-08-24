@@ -20,4 +20,4 @@ services:
     routes:
       - type: rewrite
         source: /api/*
-        destination: https://sighttech-backend.onrender.com/api/* 
+        destination: https://api.sighttech.mx/api/* 
