@@ -4,18 +4,100 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SightTech - Inteligencia Artificial para la Salud Visual</title>
-    <meta name="description" content="SightTech es una plataforma innovadora de IA para la detección temprana de retinopatía diabética, salvando la vista de millones de personas.">
-    
-    <!-- Favicon -->
+    <meta name="description" content="SightTech detecta la retinopatía diabética con IA avanzada. Resultados en menos de 60 segundos para cualquier médico, sin necesidad de especialista.">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    
-    <!-- CSS -->
-    <link rel="stylesheet" href="assets/css/beautiful.css?v=1.8">
-    
-    <!-- Font Awesome -->
+    <link rel="stylesheet" href="assets/css/dark-theme.css?v=2.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ── PROBLEM SECTION ── */
+        .problem-section { background: #050a0f; position: relative; overflow: hidden; }
+        .problem-section::before { content:''; position:absolute; top:-200px; right:-150px; width:700px; height:700px; background: radial-gradient(circle, rgba(239,68,68,0.04) 0%, transparent 65%); pointer-events:none; }
+        .problem-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+        .problem-eyebrow { display:inline-flex; align-items:center; gap:0.5rem; font-size:0.78rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#0ea5e9; background:rgba(14,165,233,0.08); border:1px solid rgba(14,165,233,0.2); border-radius:9999px; padding:0.3rem 0.875rem; margin-bottom:1.5rem; }
+        .problem-title { font-size:clamp(1.6rem,3vw,2.4rem); font-weight:800; line-height:1.2; letter-spacing:-0.03em; color:#f1f5f9; margin-bottom:1.25rem; }
+        .problem-sub { font-size:1rem; color:#94a3b8; line-height:1.7; margin-bottom:1rem; }
+        .problem-highlight { font-size:1rem; font-weight:600; color:#0ea5e9; }
+        .problem-stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+        .pstat-card { background:#0d1420; border:1px solid #1a2535; border-radius:14px; padding:1.5rem 1.25rem; transition:border-color 0.25s, box-shadow 0.25s; }
+        .pstat-card:hover { border-color:rgba(14,165,233,0.3); box-shadow:0 0 24px rgba(14,165,233,0.07); }
+        .pstat-val { font-size:2rem; font-weight:800; letter-spacing:-0.04em; color:#0ea5e9; line-height:1; margin-bottom:0.4rem; }
+        .pstat-lbl { font-size:0.82rem; color:#64748b; font-weight:500; }
+        @media(max-width:768px) { .problem-inner { grid-template-columns:1fr; gap:2.5rem; } }
+
+        /* ── FOR WHOM SECTION ── */
+        .who-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:1.25rem; }
+        .who-card:nth-child(1) { grid-column:1/3; }
+        .who-card:nth-child(2) { grid-column:3/5; }
+        .who-card:nth-child(3) { grid-column:5/7; }
+        .who-card:nth-child(4) { grid-column:2/4; }
+        .who-card:nth-child(5) { grid-column:4/6; }
+        @media(max-width:860px) {
+            .who-grid { grid-template-columns:repeat(2,1fr); }
+            .who-card:nth-child(1),.who-card:nth-child(2),.who-card:nth-child(3),.who-card:nth-child(4),.who-card:nth-child(5) { grid-column:auto; }
+        }
+        @media(max-width:480px) { .who-grid { grid-template-columns:1fr; } }
+        .who-card { background:#0d1420; border:1px solid #1a2535; border-radius:14px; padding:1.75rem 1.5rem; transition:border-color 0.25s, transform 0.25s, box-shadow 0.25s; display:flex; flex-direction:column; gap:0.875rem; }
+        .who-card:hover { border-color:rgba(14,165,233,0.35); transform:translateY(-4px); box-shadow:0 16px 40px rgba(0,0,0,0.3), 0 0 24px rgba(14,165,233,0.06); }
+        .who-icon-wrap { width:48px; height:48px; background:rgba(14,165,233,0.1); border:1px solid rgba(14,165,233,0.2); border-radius:12px; display:flex; align-items:center; justify-content:center; color:#0ea5e9; font-size:1.2rem; }
+        .who-title { font-size:1rem; font-weight:700; color:#f1f5f9; }
+        .who-text { font-size:0.855rem; color:#94a3b8; line-height:1.65; flex:1; }
+        .who-tag { display:inline-flex; align-items:center; font-size:0.72rem; font-weight:600; color:#0ea5e9; background:rgba(14,165,233,0.08); border:1px solid rgba(14,165,233,0.2); border-radius:9999px; padding:0.2rem 0.65rem; margin-top:auto; align-self:flex-start; }
+
+        /* ── TECH SECTION ── */
+        .tech-section { background: linear-gradient(180deg, #050a0f 0%, #070e18 50%, #050a0f 100%); position:relative; overflow:hidden; }
+        .tech-section::after { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:800px; height:400px; background:radial-gradient(ellipse, rgba(14,165,233,0.04) 0%, transparent 70%); pointer-events:none; }
+        .tech-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; position:relative; z-index:1; }
+        @media(max-width:768px) { .tech-grid { grid-template-columns:1fr; } }
+        .tech-card { background:#0d1420; border:1px solid #1a2535; border-radius:14px; padding:2rem 1.75rem; position:relative; overflow:hidden; transition:border-color 0.25s; }
+        .tech-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg, transparent, #0ea5e9, transparent); opacity:0; transition:opacity 0.3s; }
+        .tech-card:hover { border-color:rgba(14,165,233,0.3); }
+        .tech-card:hover::before { opacity:1; }
+        .tech-num { font-size:0.72rem; font-weight:700; color:#0ea5e9; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:1rem; opacity:0.7; display:block; }
+        .tech-icon { font-size:1.75rem; color:#0ea5e9; margin-bottom:1rem; display:block; }
+        .tech-card-title { font-size:1rem; font-weight:700; color:#f1f5f9; margin-bottom:0.625rem; }
+        .tech-card-text { font-size:0.855rem; color:#94a3b8; line-height:1.65; }
+
+        /* ── STEP NUMBERS ── */
+        .step-number { display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; background:rgba(14,165,233,0.1); border:1px solid rgba(14,165,233,0.25); border-radius:50%; font-size:0.85rem; font-weight:700; color:#0ea5e9; margin-bottom:1rem; }
+
+        /* ── ENDORSEMENT SECTION ── */
+        .endorse-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; max-width:860px; margin:0 auto; }
+        @media(max-width:640px) { .endorse-grid { grid-template-columns:1fr; } }
+        .endorse-card { background:#0d1420; border:1px solid #1a2535; border-radius:16px; padding:2rem 1.75rem; display:flex; flex-direction:column; gap:1rem; transition:border-color 0.25s, box-shadow 0.25s; }
+        .endorse-card:hover { border-color:rgba(14,165,233,0.3); box-shadow:0 0 32px rgba(14,165,233,0.06); }
+        .endorse-logo-wrap { width:52px; height:52px; background:rgba(14,165,233,0.1); border:1px solid rgba(14,165,233,0.2); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#0ea5e9; font-size:1.4rem; flex-shrink:0; }
+        .endorse-verified { display:inline-flex; align-items:center; gap:0.35rem; font-size:0.7rem; font-weight:700; color:#0ea5e9; letter-spacing:0.07em; text-transform:uppercase; background:rgba(14,165,233,0.08); border:1px solid rgba(14,165,233,0.2); border-radius:9999px; padding:0.2rem 0.6rem; margin-top:auto; align-self:flex-start; }
+        .endorse-name { font-size:1rem; font-weight:700; color:#f1f5f9; line-height:1.3; }
+        .endorse-role { font-size:0.82rem; color:#94a3b8; }
+        .doctor-avatar { width:52px; height:52px; background:linear-gradient(135deg,#0ea5e9,#0284c7); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:1.3rem; flex-shrink:0; }
+        .endorse-header { display:flex; align-items:center; gap:1rem; }
+
+        /* ── PLANS SECTION ── */
+        .plans-section { background:linear-gradient(180deg,#070e18 0%,#050a0f 100%); }
+        .plans-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; }
+        @media(max-width:768px) { .plans-grid { grid-template-columns:1fr; max-width:420px; margin:0 auto; } }
+        .plan-card { background:#0d1420; border:1px solid #1a2535; border-radius:16px; padding:2rem 1.75rem; display:flex; flex-direction:column; gap:1.25rem; transition:border-color 0.25s, box-shadow 0.25s, transform 0.25s; position:relative; }
+        .plan-card:hover { border-color:rgba(14,165,233,0.3); transform:translateY(-3px); box-shadow:0 16px 40px rgba(0,0,0,0.25); }
+        .plan-card.featured { border-color:rgba(14,165,233,0.4); background:linear-gradient(160deg,#0d1420 60%,rgba(14,165,233,0.04)); box-shadow:0 0 40px rgba(14,165,233,0.08); }
+        .plan-badge { position:absolute; top:-12px; left:50%; transform:translateX(-50%); font-size:0.72rem; font-weight:700; letter-spacing:0.07em; text-transform:uppercase; color:#fff; background:#0ea5e9; border-radius:9999px; padding:0.25rem 0.875rem; white-space:nowrap; }
+        .plan-name { font-size:1.2rem; font-weight:800; color:#f1f5f9; }
+        .plan-desc { font-size:0.85rem; color:#94a3b8; line-height:1.5; }
+        .plan-features { display:flex; flex-direction:column; gap:0.6rem; flex:1; }
+        .plan-feature { display:flex; align-items:flex-start; gap:0.6rem; font-size:0.85rem; color:#cbd5e1; }
+        .plan-feature i { color:#0ea5e9; font-size:0.75rem; margin-top:0.2rem; flex-shrink:0; }
+        .plan-cta { display:flex; align-items:center; justify-content:center; gap:0.5rem; padding:0.7rem 1.5rem; border-radius:8px; font-size:0.9rem; font-weight:600; border:1px solid rgba(14,165,233,0.35); color:#0ea5e9; background:transparent; cursor:pointer; transition:background 0.2s, border-color 0.2s; text-decoration:none; }
+        .plan-cta:hover { background:rgba(14,165,233,0.1); border-color:rgba(14,165,233,0.6); }
+        .plan-card.featured .plan-cta { background:#0ea5e9; color:#fff; border-color:#0ea5e9; }
+        .plan-card.featured .plan-cta:hover { background:#0284c7; border-color:#0284c7; }
+
+        /* ── CTA BADGE ── */
+        .cta-badge { display:inline-flex; align-items:center; gap:0.4rem; font-size:0.78rem; font-weight:600; color:#0ea5e9; background:rgba(14,165,233,0.08); border:1px solid rgba(14,165,233,0.2); border-radius:9999px; padding:0.3rem 0.875rem; margin-bottom:1.25rem; }
+
+        /* ── EYEBROW PILL ── */
+        .eyebrow-pill { display:inline-flex; align-items:center; gap:0.4rem; font-size:0.75rem; font-weight:600; letter-spacing:0.07em; text-transform:uppercase; color:#0ea5e9; background:rgba(14,165,233,0.07); border:1px solid rgba(14,165,233,0.18); border-radius:9999px; padding:0.3rem 0.875rem; margin-bottom:1.25rem; }
+    </style>
 </head>
 <body>
     <!-- Header -->
@@ -23,167 +105,333 @@
         <div class="container">
             <div class="header-content">
                 <a href="#" class="logo">
-                                    <img src="images/sighttec.png" alt="SightTech">
+                    <img src="images/sighttec.png" alt="SightTech">
                 </a>
                 <nav class="nav">
-                    <a href="#home" class="nav-link active">Inicio</a>
-                    <a href="#services" class="nav-link">Servicios</a>
-                    <a href="#features" class="nav-link">Características</a>
-                    <a href="#about" class="nav-link">Nosotros</a>
-                    <a href="login.html" class="nav-link">App</a>
-                    <a href="#contact" class="nav-link">Contacto</a>
+                    <a href="#home"      class="nav-link active" data-i18n="navHome">Inicio</a>
+                    <a href="#services"  class="nav-link" data-i18n="navForWho">Para Quién</a>
+                    <a href="#features"  class="nav-link" data-i18n="navFeatures">Cómo Funciona</a>
+                    <a href="#about"     class="nav-link" data-i18n="navAbout">Sobre la RD</a>
+                    <a href="login.html" class="nav-link" data-i18n="navApp">App</a>
+                    <a href="#contact"   class="nav-link" data-i18n="navContact">Contacto</a>
                 </nav>
+                <button class="lang-toggle" id="langToggle" onclick="toggleLang()">
+                    <span class="lang-opt active" id="langES">ES</span>
+                    <span class="lang-sep">|</span>
+                    <span class="lang-opt" id="langEN">EN</span>
+                </button>
             </div>
         </div>
     </header>
 
-    <!-- Hero Section -->
+    <!-- Hero -->
     <section class="hero" id="home">
         <div class="hero-content">
-            <h1 class="hero-title">El Futuro de la Salud Visual</h1>
-            <p class="hero-subtitle">
-                Detectamos la retinopatía diabética con inteligencia artificial avanzada. 
+            <div class="hero-eyebrow">IA Médica · Retinopatía Diabética · México</div>
+            <h1 class="hero-title" data-i18n="heroTitle">El Futuro de la Salud Visual</h1>
+            <p class="hero-subtitle" data-i18n="heroSubtitle">
+                Detectamos la retinopatía diabética con inteligencia artificial avanzada.
                 Resultados en menos de 60 segundos con precisión superior al 95%.
             </p>
             <div class="hero-buttons">
-                <button class="btn btn-primary" onclick="scrollToContact()">
-                    <i class="fas fa-phone me-2"></i>
-                    Contáctanos
-                </button>
-                <a href="login.html" class="btn btn-secondary">
-                    <i class="fas fa-play me-2"></i>
-                    Probar Demo
+                <a href="login.html" class="btn btn-primary">
+                    <i class="fas fa-rocket me-2"></i>
+                    <span data-i18n="heroBtnDemo">Probar Demo</span>
                 </a>
+                <button class="btn btn-secondary" onclick="scrollToContact()">
+                    <i class="fas fa-phone me-2"></i>
+                    <span data-i18n="heroBtnContact">Contáctanos</span>
+                </button>
+            </div>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <h3>95%</h3>
+                    <p data-i18n="stat1Label">Precisión de detección</p>
+                </div>
+                <div class="hero-stat">
+                    <h3 data-i18n="stat2Val">Minutos</h3>
+                    <p data-i18n="stat2Label">Tiempo de análisis</p>
+                </div>
+                <div class="hero-stat">
+                    <h3>2.5M+</h3>
+                    <p data-i18n="stat3Label">Pacientes en riesgo</p>
+                </div>
+                <div class="hero-stat">
+                    <h3>5</h3>
+                    <p data-i18n="stat4Label">Niveles de severidad</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Services Section -->
+    <!-- Problem Section -->
+    <section class="section problem-section" id="problema">
+        <div class="container">
+            <div class="problem-inner">
+                <div class="reveal">
+                    <div class="problem-eyebrow"><i class="fas fa-exclamation-circle"></i> <span data-i18n="problemTag">El Contexto</span></div>
+                    <h2 class="problem-title" data-i18n="problemTitle">13.7 millones de mexicanos viven con diabetes</h2>
+                    <p class="problem-sub" data-i18n="problemSubtitle">
+                        La retinopatía diabética avanza en silencio. Sin dolor, sin aviso. Cuando los síntomas aparecen, el daño ya es irreversible.
+                    </p>
+                    <p class="problem-highlight" data-i18n="problemHighlight">SightTech existe para cambiar eso.</p>
+                </div>
+                <div class="problem-stats-grid reveal">
+                    <div class="pstat-card">
+                        <div class="pstat-val" data-i18n="pStat1Val">13.7M</div>
+                        <div class="pstat-lbl" data-i18n="pStat1Lbl">Mexicanos con diabetes</div>
+                    </div>
+                    <div class="pstat-card">
+                        <div class="pstat-val" data-i18n="pStat2Val">1 de 3</div>
+                        <div class="pstat-lbl" data-i18n="pStat2Lbl">Desarrollará retinopatía</div>
+                    </div>
+                    <div class="pstat-card">
+                        <div class="pstat-val" data-i18n="pStat3Val">80%</div>
+                        <div class="pstat-lbl" data-i18n="pStat3Lbl">De casos son prevenibles</div>
+                    </div>
+                    <div class="pstat-card">
+                        <div class="pstat-val" data-i18n="pStat4Val">90%</div>
+                        <div class="pstat-lbl" data-i18n="pStat4Lbl">Llegan sin diagnóstico oportuno</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- For Whom Section -->
     <section class="section" id="services">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Nuestros Servicios</h2>
-                <p class="section-subtitle">
-                    Ofrecemos una solución integral para el manejo de la diabetes y la prevención de la ceguera
+                <h2 class="section-title" data-i18n="forWhoTitle">¿Para quién es SightTech?</h2>
+                <p class="section-subtitle" data-i18n="forWhoSubtitle">
+                    Diseñado para integrarse en cualquier punto de atención médica, sin necesidad de especialista en el lugar.
                 </p>
             </div>
-            <div class="grid grid-3">
-                <div class="card reveal">
-                    <div class="card-image">
-                        <img src="images/drs.webp" alt="Médicos Especialistas">
-                    </div>
-                    <h3 class="card-title">Médicos Especialistas</h3>
-                    <p class="card-text">
-                        Equipo de endocrinólogos expertos que abordan la diabetes mellitus y sus complicaciones 
-                        con la más alta calidad y experiencia médica.
-                    </p>
+            <div class="who-grid">
+                <div class="who-card reveal">
+                    <div class="who-icon-wrap"><i class="fas fa-stethoscope"></i></div>
+                    <div class="who-title" data-i18n="who1Title">Médicos Generales</div>
+                    <p class="who-text" data-i18n="who1Text">Incorpora el screening de retina a tu consulta. Detecta complicaciones en pacientes diabéticos sin ser oftalmólogo.</p>
+                    <span class="who-tag" data-i18n="who1Tag">Consulta general</span>
                 </div>
-                <div class="card reveal">
-                    <div class="card-image">
-                        <img src="images/nutri.webp" alt="Nutriólogos y Psicólogos">
-                    </div>
-                    <h3 class="card-title">Nutriólogos y Psicólogos</h3>
-                    <p class="card-text">
-                        Planes nutricionales personalizados y apoyo psicológico para el manejo integral 
-                        de la diabetes y el bienestar emocional.
-                    </p>
+                <div class="who-card reveal">
+                    <div class="who-icon-wrap"><i class="fas fa-clinic-medical"></i></div>
+                    <div class="who-title" data-i18n="who2Title">Médicos Familiares</div>
+                    <p class="who-text" data-i18n="who2Text">El primer contacto del paciente diabético en IMSS, ISSSTE y clínicas. Detecta retinopatía en consulta sin derivar al especialista.</p>
+                    <span class="who-tag" data-i18n="who2Tag">Primer nivel</span>
                 </div>
-                <div class="card reveal">
-                    <div class="card-image">
-                        <img src="images/diabetes.webp" alt="Educadores en Diabetes">
-                    </div>
-                    <h3 class="card-title">Educadores en Diabetes</h3>
-                    <p class="card-text">
-                        Programas educativos especializados para empoderar a los pacientes con conocimientos 
-                        y habilidades para el autocuidado.
-                    </p>
+                <div class="who-card reveal">
+                    <div class="who-icon-wrap"><i class="fas fa-hospital"></i></div>
+                    <div class="who-title" data-i18n="who3Title">Clínicas y Hospitales</div>
+                    <p class="who-text" data-i18n="who3Text">Eleva el estándar de atención con IA diagnóstica. Reportes automáticos y reducción de carga administrativa.</p>
+                    <span class="who-tag" data-i18n="who3Tag">Instituciones</span>
+                </div>
+                <div class="who-card reveal">
+                    <div class="who-icon-wrap"><i class="fas fa-globe-americas"></i></div>
+                    <div class="who-title" data-i18n="who4Title">Programas de Salud Pública</div>
+                    <p class="who-text" data-i18n="who4Text">Lleva el screening masivo a comunidades sin acceso a especialistas. Un dispositivo, miles de diagnósticos.</p>
+                    <span class="who-tag" data-i18n="who4Tag">Impacto social</span>
+                </div>
+                <div class="who-card reveal">
+                    <div class="who-icon-wrap"><i class="fas fa-eye"></i></div>
+                    <div class="who-title" data-i18n="who5Title">Oftalmólogos</div>
+                    <p class="who-text" data-i18n="who5Text">Optimiza el screening de alto volumen. Pre-clasifica pacientes antes de la evaluación completa — más alcance, mismo tiempo.</p>
+                    <span class="who-tag" data-i18n="who5Tag">Especialistas visuales</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Features Section -->
+    <!-- Features / How it works -->
     <section class="section features" id="features">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Sistema de Detección Inteligente</h2>
-                <p class="section-subtitle">
+                <h2 class="section-title" data-i18n="featuresTitle">Sistema de Detección Inteligente</h2>
+                <p class="section-subtitle" data-i18n="featuresSubtitle">
                     Nuestro proceso de 3 pasos hace que la detección sea rápida, precisa y accesible
                 </p>
             </div>
             <div class="grid grid-3">
                 <div class="feature-card reveal">
-                    <div class="feature-icon">
-                        <i class="fas fa-camera"></i>
-                    </div>
-                    <h3 class="feature-title">Paso 1: Captura</h3>
-                    <p class="feature-text">
-                        Captura imágenes de fondo de ojo de alta calidad para un análisis preciso 
-                        y confiable de la retina.
-                    </p>
+                    <div class="step-number">01</div>
+                    <div class="feature-icon"><i class="fas fa-camera"></i></div>
+                    <h3 class="feature-title" data-i18n="step1Title">Paso 1: Captura</h3>
+                    <p class="feature-text" data-i18n="step1Text">Captura imágenes de fondo de ojo de alta calidad para un análisis preciso y confiable de la retina.</p>
                 </div>
                 <div class="feature-card reveal">
-                    <div class="feature-icon">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                    </div>
-                    <h3 class="feature-title">Paso 2: Subida Segura</h3>
-                    <p class="feature-text">
-                        Sube las imágenes de forma segura a nuestra plataforma en la nube 
-                        con encriptación de datos de nivel bancario.
-                    </p>
+                    <div class="step-number">02</div>
+                    <div class="feature-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                    <h3 class="feature-title" data-i18n="step2Title">Paso 2: Subida Segura</h3>
+                    <p class="feature-text" data-i18n="step2Text">Sube las imágenes de forma segura a nuestra plataforma en la nube con encriptación de datos de nivel bancario.</p>
                 </div>
                 <div class="feature-card reveal">
-                    <div class="feature-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <h3 class="feature-title">Paso 3: Resultados</h3>
-                    <p class="feature-text">
-                        Obtén resultados detallados en menos de 60 segundos con nuestra 
-                        inteligencia artificial de última generación.
-                    </p>
+                    <div class="step-number">03</div>
+                    <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                    <h3 class="feature-title" data-i18n="step3Title">Paso 3: Resultados</h3>
+                    <p class="feature-text" data-i18n="step3Text">Obtén resultados detallados en menos de 60 segundos con nuestra inteligencia artificial de última generación.</p>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- Tech Section -->
+    <section class="section tech-section" id="tecnologia">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title" data-i18n="techTitle">Tecnología que inspira confianza</h2>
+                <p class="section-subtitle" data-i18n="techSubtitle">
+                    Construido sobre arquitecturas de visión por computadora de clase mundial, optimizado para el diagnóstico de retina.
+                </p>
+            </div>
+            <div class="tech-grid">
+                <div class="tech-card reveal">
+                    <span class="tech-num">01 / IA</span>
+                    <i class="fas fa-brain tech-icon"></i>
+                    <h3 class="tech-card-title" data-i18n="tech1Title">Red Neuronal ResNet50</h3>
+                    <p class="tech-card-text" data-i18n="tech1Text">Modelo de deep learning entrenado en miles de imágenes de fondo de ojo. Detecta microaneurismas, hemorragias y neovasos con alta precisión.</p>
+                </div>
+                <div class="tech-card reveal">
+                    <span class="tech-num">02 / Diagnóstico</span>
+                    <i class="fas fa-layer-group tech-icon"></i>
+                    <h3 class="tech-card-title" data-i18n="tech2Title">Escala ICDRD Validada</h3>
+                    <p class="tech-card-text" data-i18n="tech2Text">5 niveles de severidad reconocidos internacionalmente: Sin RD, Leve, Moderada, Severa y Proliferativa. Compatible con protocolos clínicos globales.</p>
+                </div>
+                <div class="tech-card reveal">
+                    <span class="tech-num">03 / Reporte</span>
+                    <i class="fas fa-file-medical tech-icon"></i>
+                    <h3 class="tech-card-title" data-i18n="tech3Title">Reporte PDF Inteligente</h3>
+                    <p class="tech-card-text" data-i18n="tech3Text">Genera en segundos un informe clínico completo con diagnóstico, parámetros del paciente, nivel de riesgo y plan de seguimiento.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-
-    <!-- About Section -->
+    <!-- About / RD Section -->
     <section class="section" id="about">
         <div class="container">
             <div class="grid grid-2">
                 <div class="reveal">
-                    <h2 class="section-title">¿Qué es la Retinopatía Diabética?</h2>
-                    <p class="section-subtitle mb-6">
-                        Es una de las enfermedades más frecuentes de la retina y la principal causa de ceguera en México.
+                    <div class="eyebrow-pill"><i class="fas fa-eye"></i> Retinopatía Diabética</div>
+                    <h2 class="section-title" data-i18n="newAboutTitle">La enfermedad que nadie ve venir</h2>
+                    <p class="mb-4" style="color:var(--text-muted);line-height:1.75;font-size:0.95rem;" data-i18n="newAboutP1">
+                        La retinopatía diabética daña silenciosamente los vasos sanguíneos de la retina durante años. No genera dolor ni síntomas visibles hasta etapas avanzadas — momento en que la pérdida visual puede ser permanente.
                     </p>
-                    <p class="mb-4">
-                        La retinopatía diabética es una alteración lenta y progresiva de los vasos sanguíneos de la retina, 
-                        causada por los niveles elevados y sostenidos de glucosa en sangre.
-                    </p>
-                    <p class="mb-6">
-                        En vista de la alta prevalencia de diabetes en nuestro país, se calcula que más de dos millones 
-                        y medio de pacientes padecen algún grado de retinopatía diabética.
+                    <p class="mb-6" style="color:var(--text-muted);line-height:1.75;font-size:0.95rem;" data-i18n="newAboutP2">
+                        Con más de 13.7 millones de mexicanos con diabetes y solo 1 oftalmólogo por cada 50,000 habitantes en zonas rurales, la brecha diagnóstica es crítica. La detección temprana con IA es la única solución escalable.
                     </p>
                     <div class="stats">
                         <div class="stat">
                             <h3>2.5M+</h3>
-                            <p>Pacientes afectados</p>
+                            <p data-i18n="stat3Label">Pacientes en riesgo</p>
                         </div>
                         <div class="stat">
                             <h3>95%</h3>
-                            <p>Precisión de detección</p>
+                            <p data-i18n="stat1Label">Precisión de detección</p>
                         </div>
                         <div class="stat">
-                            <h3>< 60s</h3>
-                            <p>Tiempo de análisis</p>
+                            <h3>Minutos</h3>
+                            <p data-i18n="stat2Label">Tiempo de análisis</p>
                         </div>
                     </div>
                 </div>
                 <div class="reveal">
-                    <div class="card-image">
+                    <div class="card-image" style="height:420px;border-radius:1rem;">
                         <img src="images/doctor.webp" alt="Médico especialista">
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Endorsement Section -->
+    <section class="section" id="respaldo">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title" data-i18n="endorseTitle">Respaldado por la comunidad médica</h2>
+                <p class="section-subtitle" data-i18n="endorseSubtitle">
+                    SightTech nació con el aval de especialistas comprometidos con la salud visual en México.
+                </p>
+            </div>
+            <div class="endorse-grid">
+                <div class="endorse-card reveal">
+                    <div class="endorse-header">
+                        <div class="endorse-logo-wrap"><i class="fas fa-shield-alt"></i></div>
+                        <div>
+                            <div class="endorse-name" data-i18n="endorseSociety">Sociedad Mexicana de Oftalmólogos Militares</div>
+                            <div class="endorse-role" data-i18n="endorseSocietyDesc">Institución médica especializada en salud visual con presencia nacional.</div>
+                        </div>
+                    </div>
+                    <div class="endorse-verified"><i class="fas fa-check-circle"></i> Institución verificada</div>
+                </div>
+                <div class="endorse-card reveal">
+                    <div class="endorse-header">
+                        <div class="doctor-avatar"><i class="fas fa-user-md"></i></div>
+                        <div>
+                            <div class="endorse-name" data-i18n="endorseDrTitle">Cirujano Oftalmólogo</div>
+                            <div class="endorse-role" style="color:#475569;font-size:0.78rem;" data-i18n="endorseDrOrg">Sociedad Mexicana de Oftalmólogos Militares</div>
+                        </div>
+                    </div>
+                    <div class="endorse-verified"><i class="fas fa-check-circle"></i> Especialista verificado</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Plans Section -->
+    <section class="section plans-section" id="planes">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title" data-i18n="plansTitle">¿Cómo quieres usar SightTech?</h2>
+                <p class="section-subtitle" data-i18n="plansSubtitle">
+                    Tres modelos adaptados a tu práctica o institución. Sin compromisos hasta que estés listo.
+                </p>
+            </div>
+            <div class="plans-grid">
+                <div class="plan-card reveal">
+                    <div>
+                        <div class="plan-name" data-i18n="plan1Name">Por Escaneo</div>
+                        <div class="plan-desc" data-i18n="plan1Desc">Ideal para consultorios y clínicas que inician</div>
+                    </div>
+                    <ul class="plan-features">
+                        <li class="plan-feature"><i class="fas fa-check"></i><span data-i18n="plan1F1">Pago por análisis realizado</span></li>
+                        <li class="plan-feature"><i class="fas fa-check"></i><span data-i18n="plan1F2">Sin mensualidad fija</span></li>
+                        <li class="plan-feature"><i class="fas fa-check"></i><span data-i18n="plan1F3">Reporte PDF por escaneo</span></li>
+                        <li class="plan-feature"><i class="fas fa-check"></i><span data-i18n="plan1F4">Soporte por email</span></li>
+                    </ul>
+                    <a href="#contact" class="plan-cta" onclick="scrollToContact()">
+                        <i class="fas fa-envelope"></i> <span data-i18n="planCta">Contactar para precios</span>
+                    </a>
+                </div>
+                <div class="plan-card featured reveal">
+                    <div class="plan-badge" data-i18n="plan2Badge">Más popular</div>
+                    <div>
+                        <div class="plan-name" data-i18n="plan2Name">Clínica</div>
+                        <div class="plan-desc" data-i18n="plan2Desc">Para clínicas y hospitales en crecimiento</div>
+                    </div>
+                    <ul class="plan-features">
+                        <li class="plan-feature"><i class="fas fa-check"></i><span data-i18n="plan2F1">Análisis ilimitados al mes</span></li>
+                        <li class="plan-feature"><i class="fas fa-check"></i><span data-i18n="plan2F2">Dashboard de pacientes</span></li>
+                        <li class="plan-feature"><i class="fas fa-check"></i><span data-i18n="plan2F3">Historial y reportes avanzados</span></li>
+                        <li class="plan-feature"><i class="fas fa-check"></i><span data-i18n="plan2F4">Soporte prioritario</span></li>
+                    </ul>
+                    <a href="#contact" class="plan-cta" onclick="scrollToContact()">
+                        <i class="fas fa-envelope"></i> <span data-i18n="planCta">Contactar para precios</span>
+                    </a>
+                </div>
+                <div class="plan-card reveal">
+                    <div>
+                        <div class="plan-name" data-i18n="plan3Name">Institucional</div>
+                        <div class="plan-desc" data-i18n="plan3Desc">Para hospitales y programas de salud pública</div>
+                    </div>
+                    <ul class="plan-features">
+                        <li class="plan-feature"><i class="fas fa-check"></i><span data-i18n="plan3F1">Multi-sede ilimitado</span></li>
+                        <li class="plan-feature"><i class="fas fa-check"></i><span data-i18n="plan3F2">Integración con expediente clínico</span></li>
+                        <li class="plan-feature"><i class="fas fa-check"></i><span data-i18n="plan3F3">Reportes institucionales</span></li>
+                        <li class="plan-feature"><i class="fas fa-check"></i><span data-i18n="plan3F4">Soporte dedicado 24/7</span></li>
+                    </ul>
+                    <a href="#contact" class="plan-cta" onclick="scrollToContact()">
+                        <i class="fas fa-envelope"></i> <span data-i18n="planCta">Contactar para precios</span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -193,20 +441,20 @@
     <section class="section cta" id="cta">
         <div class="container">
             <div class="cta-content">
-                <h2 class="cta-title">Inteligencia Artificial Avanzada</h2>
-                <p class="cta-text">
-                    Nuestro sistema utiliza algoritmos de machine learning de última generación para detectar 
-                    la retinopatía diabética con una precisión superior al 95%, proporcionando resultados 
-                    confiables y rápidos para el diagnóstico temprano.
+                <div class="cta-badge"><i class="fas fa-eye"></i> Detección Temprana con IA</div>
+                <h2 class="cta-title" data-i18n="newCtaTitle">Detecta lo que el ojo no puede ver</h2>
+                <p class="cta-text" data-i18n="newCtaText">
+                    SightTech pone la IA más avanzada en retinopatía diabética al alcance de cualquier médico.
+                    Resultados en menos de 60 segundos. Reportes listos para el expediente clínico.
                 </p>
                 <div class="hero-buttons">
                     <a href="login.html" class="btn btn-primary">
                         <i class="fas fa-rocket me-2"></i>
-                        Probar Ahora
+                        <span data-i18n="ctaBtn1">Probar Ahora</span>
                     </a>
                     <button class="btn btn-secondary" onclick="scrollToContact()">
-                        <i class="fas fa-info-circle me-2"></i>
-                        Más Información
+                        <i class="fas fa-phone me-2"></i>
+                        <span data-i18n="heroBtnContact">Contáctanos</span>
                     </button>
                 </div>
             </div>
@@ -219,189 +467,136 @@
             <div class="footer-content">
                 <div class="footer-section">
                     <h3>SightTech</h3>
-                    <p>
-                        Somos una startup innovadora dedicada a la detección temprana de la retinopatía diabética, 
+                    <p data-i18n="footerDesc">
+                        Somos una startup innovadora dedicada a la detección temprana de la retinopatía diabética,
                         la principal causa de ceguera irreversible en el mundo.
                     </p>
                     <div class="social-links">
-                        <a href="https://www.facebook.com/SightTechArtificialintelligenceforHealth" class="social-link">
+                        <a href="https://www.facebook.com/SightTechArtificialintelligenceforHealth" class="social-link" target="_blank" rel="noopener">
                             <i class="fab fa-facebook-f"></i>
                         </a>
-                        <a href="https://www.linkedin.com/company/sight-tech/" class="social-link">
+                        <a href="https://www.linkedin.com/company/sight-tech/" class="social-link" target="_blank" rel="noopener">
                             <i class="fab fa-linkedin-in"></i>
                         </a>
                     </div>
                 </div>
                 <div class="footer-section">
-                    <h3>Contacto</h3>
+                    <h3 data-i18n="footerContact">Contacto</h3>
                     <p><i class="fas fa-envelope me-2"></i> informacion@sighttech.com</p>
                     <p><i class="fas fa-phone me-2"></i> +52 55 5102 4895</p>
                     <p><i class="fas fa-map-marker-alt me-2"></i> México</p>
                 </div>
                 <div class="footer-section">
-                    <h3>Enlaces Rápidos</h3>
-                    <p><a href="#home">Inicio</a></p>
-                    <p><a href="#services">Servicios</a></p>
-                                            <p><a href="login.html">Aplicación</a></p>
-                    <p><a href="#about">Nosotros</a></p>
+                    <h3 data-i18n="footerLinks">Enlaces Rápidos</h3>
+                    <p><a href="#home" data-i18n="navHome">Inicio</a></p>
+                    <p><a href="#services" data-i18n="navForWho">Para Quién</a></p>
+                    <p><a href="login.html" data-i18n="navApp">Aplicación</a></p>
+                    <p><a href="#about" data-i18n="navAbout">Sobre la RD</a></p>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 SightTech. Todos los derechos reservados.</p>
+                <p data-i18n="footerCopy">&copy; 2026 SightTech. Todos los derechos reservados.</p>
             </div>
         </div>
     </footer>
 
-
-    
     <!-- Chatbot -->
     <button class="chatbot-toggle" id="chatbotToggle">
         <i class="fas fa-comments"></i>
     </button>
-    
     <div class="chatbot-window" id="chatbotWindow">
         <div class="chatbot-header">
-            <span class="chatbot-title">SightTech Chatbot</span>
+            <span class="chatbot-title" data-i18n="chatTitle">SightTech Chatbot</span>
             <button class="chatbot-close" id="chatbotClose">
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <div class="chatbot-messages" id="chatMessages">
-            <!-- Messages will be added here -->
-        </div>
+        <div class="chatbot-messages" id="chatMessages"></div>
         <form class="chatbot-form" id="chatForm">
-            <input type="text" class="chatbot-input" id="chatInput" placeholder="Escribe tu pregunta aquí..." required>
+            <input type="text" class="chatbot-input" id="chatInput" data-i18n="chatPlaceholder" placeholder="Escribe tu pregunta aquí..." required>
             <button type="submit" class="chatbot-send">
                 <i class="fas fa-paper-plane"></i>
             </button>
         </form>
     </div>
 
-    <!-- JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.3/axios.min.js"></script>
+    <script src="assets/js/i18n.js"></script>
     <script>
-        // Header scroll effect
         window.addEventListener('scroll', function() {
-            const header = document.getElementById('header');
-            if (window.scrollY > 100) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
+            document.getElementById('header').classList.toggle('scrolled', window.scrollY > 100);
         });
 
-        // Smooth scrolling for navigation
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
+            anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
         });
 
-        // Scroll animations
         function reveal() {
-            const reveals = document.querySelectorAll('.reveal');
-            reveals.forEach(element => {
-                const windowHeight = window.innerHeight;
-                const elementTop = element.getBoundingClientRect().top;
-                const elementVisible = 150;
-                
-                if (elementTop < windowHeight - elementVisible) {
-                    element.classList.add('active');
-                }
+            document.querySelectorAll('.reveal').forEach(el => {
+                if (el.getBoundingClientRect().top < window.innerHeight - 120) el.classList.add('active');
             });
         }
-
         window.addEventListener('scroll', reveal);
-        reveal(); // Initial check
+        reveal();
 
-
-
-        // Chatbot functionality
         const chatbotToggle = document.getElementById('chatbotToggle');
         const chatbotWindow = document.getElementById('chatbotWindow');
-        const chatbotClose = document.getElementById('chatbotClose');
-        const chatForm = document.getElementById('chatForm');
-        const chatInput = document.getElementById('chatInput');
-        const chatMessages = document.getElementById('chatMessages');
+        const chatbotClose  = document.getElementById('chatbotClose');
+        const chatForm      = document.getElementById('chatForm');
+        const chatInput     = document.getElementById('chatInput');
+        const chatMessages  = document.getElementById('chatMessages');
 
-        chatbotToggle.addEventListener('click', function() {
-            chatbotWindow.style.display = 'flex';
-        });
-
-        chatbotClose.addEventListener('click', function() {
-            chatbotWindow.style.display = 'none';
-        });
+        chatbotToggle.addEventListener('click', () => { chatbotWindow.style.display = 'flex'; });
+        chatbotClose.addEventListener('click',  () => { chatbotWindow.style.display = 'none'; });
 
         chatForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             const message = chatInput.value.trim();
             if (!message) return;
-
-            // Add user message
             addMessage(message, 'user');
             chatInput.value = '';
-
             try {
                 const response = await fetch('https://api.sighttech.mx/api/chat', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        message: message,
-                        context: {}
-                    })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message, context: {} })
                 });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    addMessage(data.response, 'bot');
-                } else {
-                    addMessage('Lo siento, hay un problema con el servidor. Inténtalo de nuevo.', 'bot');
-                }
-            } catch (error) {
+                const data = await response.json();
+                addMessage(response.ok ? data.response : 'Lo siento, hay un problema con el servidor.', 'bot');
+            } catch {
                 addMessage('Lo siento, no puedo conectarme al servidor en este momento.', 'bot');
             }
         });
 
         function addMessage(text, sender) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `chat-message ${sender}`;
-            
+            const div = document.createElement('div');
+            div.className = `chat-message ${sender}`;
             const avatar = document.createElement('img');
             avatar.className = 'chat-avatar';
             avatar.src = sender === 'user' ? 'icons/user.png' : 'icons/chatbot.png';
-            avatar.alt = sender === 'user' ? 'Usuario' : 'Chatbot';
-            
+            avatar.alt = sender;
             const bubble = document.createElement('div');
             bubble.className = 'chat-bubble';
             bubble.textContent = text;
-            
-            messageDiv.appendChild(avatar);
-            messageDiv.appendChild(bubble);
-            chatMessages.appendChild(messageDiv);
-            
-            // Scroll to bottom
+            div.appendChild(avatar);
+            div.appendChild(bubble);
+            chatMessages.appendChild(div);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
-        // Contact scroll function
         function scrollToContact() {
-            document.getElementById('contact').scrollIntoView({ 
-                behavior: 'smooth' 
-            });
+            document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Add welcome message
         setTimeout(() => {
-            addMessage('¡Hola! Soy el asistente virtual de SightTech. ¿En qué puedo ayudarte hoy?', 'bot');
+            const lang = localStorage.getItem('sighttech_lang') || 'es';
+            addMessage(lang === 'en'
+                ? "Hello! I'm the SightTech virtual assistant. How can I help you today?"
+                : '¡Hola! Soy el asistente virtual de SightTech. ¿En qué puedo ayudarte hoy?', 'bot');
         }, 1000);
     </script>
 </body>

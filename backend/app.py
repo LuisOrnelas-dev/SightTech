@@ -9,19 +9,19 @@ import numpy as np
 from PIL import Image
 import io
 from reportlab.lib.pagesizes import A4
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image as RLImage, Table, TableStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image as RLImage, Table, TableStyle, HRFlowable
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.lib import colors
-from reportlab.lib.enums import TA_CENTER, TA_LEFT
+from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
 
 app = Flask(__name__)
-CORS(app, origins=['https://sighttech.mx', 'http://localhost:5001', 'http://localhost:3000'])
+CORS(app, origins=['https://sighttech.mx', 'https://www.sighttech.mx', 'http://localhost:8080', 'http://localhost:5001', 'http://localhost:3000'])
 
 # Configuración de la base de datos
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sighttech.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'sighttech-secret-key-2024'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'sighttech-secret-key-dev')
 
 db = SQLAlchemy(app)
 
@@ -383,146 +383,213 @@ def generate_recommendations(prediction, confidence, symptoms_data=None, medical
     
     return recommendations
 
-def create_pdf_report(patient_data, images, diagnosis_result):
-    """Crea un reporte PDF profesional con información completa del paciente e imágenes"""
-    
+def create_pdf_report(patient_data, images, diagnosis_result, physician_name='SightTech'):
+    """Crea un reporte PDF médico profesional con jerarquía visual clara"""
+
     with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmp_file:
         pdf_path = tmp_file.name
-    
-    doc = SimpleDocTemplate(pdf_path, pagesize=A4)
+
+    doc = SimpleDocTemplate(
+        pdf_path, pagesize=A4,
+        leftMargin=0.75*inch, rightMargin=0.75*inch,
+        topMargin=0.55*inch, bottomMargin=0.75*inch
+    )
     story = []
-    
     styles = getSampleStyleSheet()
-    title_style = ParagraphStyle(
-        'CustomTitle',
-        parent=styles['Heading1'],
-        fontSize=24,
-        spaceAfter=30,
-        alignment=TA_CENTER,
-        textColor=colors.HexColor('#2563eb')
-    )
-    
-    subtitle_style = ParagraphStyle(
-        'CustomSubtitle',
-        parent=styles['Heading2'],
-        fontSize=16,
-        spaceAfter=20,
-        textColor=colors.HexColor('#374151')
-    )
-    
-    normal_style = ParagraphStyle(
-        'CustomNormal',
-        parent=styles['Normal'],
-        fontSize=12,
-        spaceAfter=12
-    )
-    
-    # Encabezado
-    story.append(Paragraph("SightTech - Reporte de Diagnóstico", title_style))
-    story.append(Paragraph("Detección de Retinopatía Diabética", subtitle_style))
-    story.append(Spacer(1, 20))
-    
-    # Información completa del paciente
-    story.append(Paragraph("INFORMACIÓN COMPLETA DEL PACIENTE", subtitle_style))
-    
-    # Información básica
-    basic_info = [
-        ["Nombre:", patient_data.get('name', 'No especificado')],
-        ["Edad:", f"{patient_data.get('age', 'No especificado')} años"],
-        ["Género:", patient_data.get('gender', 'No especificado')],
-        ["Fecha de análisis:", datetime.now().strftime("%d/%m/%Y %H:%M")],
-    ]
-    
-    # Información médica
-    medical_info = [
-        ["Tiempo con diabetes:", f"{patient_data.get('diabetes_years', 'No especificado')} años"],
-        ["Tipo de diabetes:", patient_data.get('diabetes_type', 'No especificado').replace('_', ' ').title()],
-        ["Nivel de glucosa:", f"{patient_data.get('glucose_level', 'No especificado')} mg/dL"],
-        ["HbA1c:", f"{patient_data.get('hba1c', 'No especificado')}%"],
-        ["Presión arterial:", f"{patient_data.get('blood_pressure', 'No especificado')} mmHg"],
-        ["Colesterol:", f"{patient_data.get('cholesterol', 'No especificado')} mg/dL"],
-        ["IMC:", f"{patient_data.get('bmi', 'No especificado')} kg/m²"],
-        ["Capacidad visual OD:", patient_data.get('vision_right_eye', 'No especificado')],
-        ["Capacidad visual OI:", patient_data.get('vision_left_eye', 'No especificado')],
-    ]
-    
-    # Información adicional
-    additional_info = [
-        ["Medicamentos:", patient_data.get('medications', 'No especificado')],
-        ["Comorbilidades:", patient_data.get('comorbidities', 'No especificado')],
-        ["Último examen ocular:", patient_data.get('last_eye_exam', 'No especificado').replace('_', ' ').title()],
-        ["Diagnóstico previo:", patient_data.get('previous_diagnosis', 'No especificado').replace('_', ' ').title()],
-    ]
-    
-    # Crear tabla combinada
-    all_info = basic_info + medical_info + additional_info
-    patient_table = Table(all_info, colWidths=[2.5*inch, 3.5*inch])
-    patient_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (0, -1), colors.HexColor('#f3f4f6')),
-        ('TEXTCOLOR', (0, 0), (0, -1), colors.HexColor('#374151')),
-        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, -1), 9),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
-        ('GRID', (0, 0), (-1, -1), 1, colors.HexColor('#d1d5db'))
+
+    severity   = diagnosis_result.get('severity', 1)
+    confidence = diagnosis_result.get('confidence', 0)
+    prediction = diagnosis_result.get('prediction', '—')
+
+    SEV_COLORS  = {1:'#10b981', 2:'#3b82f6', 3:'#f59e0b', 4:'#ef4444', 5:'#dc2626'}
+    SEV_LABELS  = ['Sin RD', 'Leve', 'Moderada', 'Severa', 'Proliferativa']
+    NEXT_REVIEW = {1:'6-12 meses', 2:'3-6 meses', 3:'1-2 meses', 4:'2-4 semanas', 5:'1-2 semanas'}
+    PROG_RISK   = ['Bajo', 'Moderado', 'Alto', 'Muy alto', 'Crítico']
+    URGENCY     = {4:'Consulta URGENTE (24-48h)', 5:'Consulta URGENTE (24-48h)'}
+
+    sev_color = colors.HexColor(SEV_COLORS.get(severity, '#10b981'))
+    sev_label = SEV_LABELS[severity-1] if 1 <= severity <= 5 else '—'
+    accent    = colors.HexColor('#0ea5e9')
+
+    def ps(name, **kw):
+        return ParagraphStyle(name, parent=styles['Normal'], **kw)
+
+    white_big   = ps('WBig',  fontSize=20, fontName='Helvetica-Bold', textColor=colors.white, alignment=TA_CENTER)
+    white_med   = ps('WMed',  fontSize=9,  textColor=colors.white, alignment=TA_CENTER)
+    white_sm    = ps('WSm',   fontSize=7.5,textColor=colors.HexColor('#e5e7eb'), alignment=TA_CENTER)
+    sec_title   = ps('SecT',  fontSize=8,  fontName='Helvetica-Bold', textColor=accent, spaceBefore=8, spaceAfter=3)
+    lbl_style   = ps('Lbl',   fontSize=8,  fontName='Helvetica-Bold', textColor=colors.HexColor('#374151'))
+    val_style   = ps('Val',   fontSize=8,  textColor=colors.HexColor('#111827'))
+    rec_style   = ps('Rec',   fontSize=8,  textColor=colors.HexColor('#1f2937'), spaceBefore=2, spaceAfter=1, leftIndent=8)
+    note_style  = ps('Note',  fontSize=7,  textColor=colors.HexColor('#6b7280'))
+    sig_r_style = ps('SigR',  fontSize=7,  textColor=colors.HexColor('#9ca3af'), alignment=TA_RIGHT)
+
+    # ── HEADER ──────────────────────────────────────────────────────────
+    hdr = Table([[
+        Paragraph('<b><font color="#0ea5e9" size="13">SightTech</font></b>', styles['Normal']),
+        Paragraph(
+            f'<font size="8" color="#6b7280">Reporte de Análisis · Retinopatía Diabética'
+            f'<br/>Fecha: {datetime.now().strftime("%d/%m/%Y %H:%M")}</font>',
+            ps('HdrR', alignment=TA_RIGHT, fontSize=8)
+        ),
+    ]], colWidths=[3.5*inch, 3.5*inch])
+    hdr.setStyle(TableStyle([
+        ('VALIGN',      (0,0), (-1,-1), 'MIDDLE'),
+        ('BOTTOMPADDING',(0,0),(-1,-1), 8),
+        ('LINEBELOW',   (0,0), (-1,-1), 1, accent),
     ]))
-    story.append(patient_table)
-    story.append(Spacer(1, 20))
-    
-    # Imágenes analizadas
-    story.append(Paragraph("IMÁGENES ANALIZADAS", subtitle_style))
-    story.append(Paragraph(f"Se analizaron {len(images)} imagen(es) del fondo de ojo.", normal_style))
-    story.append(Spacer(1, 15))
-    
-    # Agregar las imágenes al PDF
-    try:
+    story.append(hdr)
+    story.append(Spacer(1, 10))
+
+    # ── DIAGNOSIS HERO ──────────────────────────────────────────────────
+    hero = Table([
+        [Paragraph(sev_label, white_big)],
+        [Paragraph(prediction, white_med)],
+        [Paragraph(f'Confianza: {confidence:.1f}%   ·   Nivel: {severity}/5   ·   Imágenes analizadas: {len(images)}', white_sm)],
+    ], colWidths=[7*inch])
+    hero.setStyle(TableStyle([
+        ('BACKGROUND',    (0,0), (-1,-1), sev_color),
+        ('ALIGN',         (0,0), (-1,-1), 'CENTER'),
+        ('TOPPADDING',    (0,0), (-1,-1), 10),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 10),
+    ]))
+    story.append(hero)
+    story.append(Spacer(1, 5))
+
+    # ── ICDRD SCALE ─────────────────────────────────────────────────────
+    scale_cells  = SEV_LABELS[:]
+    scale_styles = [
+        ('FONTSIZE',      (0,0), (-1,-1), 7.5),
+        ('FONTNAME',      (0,0), (-1,-1), 'Helvetica-Bold'),
+        ('ALIGN',         (0,0), (-1,-1), 'CENTER'),
+        ('TOPPADDING',    (0,0), (-1,-1), 4),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 4),
+    ]
+    for i in range(5):
+        filled = i < severity
+        scale_styles.append(('BACKGROUND', (i,0), (i,0),
+            sev_color if filled else colors.HexColor('#e5e7eb')))
+        scale_styles.append(('TEXTCOLOR', (i,0), (i,0),
+            colors.white if filled else colors.HexColor('#9ca3af')))
+    scale_tbl = Table([scale_cells], colWidths=[1.4*inch]*5)
+    scale_tbl.setStyle(TableStyle(scale_styles))
+    story.append(scale_tbl)
+    story.append(Spacer(1, 12))
+
+    # ── TWO-COLUMN: PATIENT + CLINICAL ──────────────────────────────────
+    def info_rows(data):
+        rows = [[Paragraph(f'<b>{k}</b>', lbl_style), Paragraph(str(v or '—'), val_style)] for k, v in data]
+        t = Table(rows, colWidths=[1.75*inch, 1.65*inch])
+        t.setStyle(TableStyle([
+            ('ALIGN',         (0,0), (-1,-1), 'LEFT'),
+            ('BOTTOMPADDING', (0,0), (-1,-1), 4),
+            ('LINEBELOW',     (0,0), (-1,-1), 0.3, colors.HexColor('#e5e7eb')),
+        ]))
+        return t
+
+    def v(key, suffix=''):
+        val = patient_data.get(key)
+        if val in (None, '', 'No especificado'): return '—'
+        return f"{val}{suffix}"
+
+    patient_tbl = info_rows([
+        ('Nombre',           v('name')),
+        ('Edad',             v('age', ' años')),
+        ('Género',           v('gender')),
+        ('Años con diabetes',v('diabetes_years', ' años')),
+        ('Tipo de diabetes', v('diabetes_type','').replace('_',' ').title() if patient_data.get('diabetes_type') else '—'),
+        ('Visión OD',        v('vision_right_eye')),
+        ('Visión OI',        v('vision_left_eye')),
+        ('Medicamentos',     v('medications')),
+        ('Comorbilidades',   v('comorbidities')),
+    ])
+    clinical_tbl = info_rows([
+        ('Glucosa',          v('glucose_level', ' mg/dL')),
+        ('HbA1c',            v('hba1c', '%')),
+        ('Presión arterial', v('blood_pressure')),
+        ('Colesterol',       v('cholesterol', ' mg/dL')),
+        ('IMC',              v('bmi', ' kg/m²')),
+        ('Último exam. ocular', v('last_eye_exam','').replace('_',' ').title() if patient_data.get('last_eye_exam') else '—'),
+        ('Diagnóstico previo',  v('previous_diagnosis','').replace('_',' ').title() if patient_data.get('previous_diagnosis') else '—'),
+    ])
+
+    two_col = Table([
+        [Paragraph('DATOS DEL PACIENTE', sec_title), Paragraph('PARÁMETROS CLÍNICOS', sec_title)],
+        [patient_tbl, clinical_tbl],
+    ], colWidths=[3.5*inch, 3.5*inch])
+    two_col.setStyle(TableStyle([
+        ('VALIGN',       (0,0), (-1,-1), 'TOP'),
+        ('LEFTPADDING',  (1,0), (1,-1),  12),
+    ]))
+    story.append(two_col)
+    story.append(Spacer(1, 10))
+
+    # ── NEXT STEPS ──────────────────────────────────────────────────────
+    urgency_text = URGENCY.get(severity, 'Prioritaria (1-2 semanas)' if severity == 3 else 'Rutina programada')
+    steps_rows = info_rows([
+        ('Urgencia',            urgency_text),
+        ('Próxima revisión',    NEXT_REVIEW.get(severity, '—')),
+        ('Riesgo de progresión',PROG_RISK[severity-1] if 1 <= severity <= 5 else '—'),
+        ('Tratamiento indicado','Sí' if severity >= 3 else 'No'),
+    ])
+    story.append(Paragraph('PRÓXIMOS PASOS', sec_title))
+    story.append(steps_rows)
+    story.append(Spacer(1, 10))
+
+    # ── RECOMMENDATIONS ─────────────────────────────────────────────────
+    story.append(Paragraph('RECOMENDACIONES MÉDICAS', sec_title))
+    for i, rec in enumerate(diagnosis_result.get('recommendations', []), 1):
+        clean = ''.join(c for c in rec if c.isascii() or 0x00C0 <= ord(c) <= 0x024F).strip()
+        story.append(Paragraph(f'{i}. {clean}', rec_style))
+    story.append(Spacer(1, 10))
+
+    # ── RETINAL IMAGES ──────────────────────────────────────────────────
+    if images:
+        story.append(Paragraph('IMÁGENES DE FONDO DE OJO ANALIZADAS', sec_title))
+        img_cells = []
         for i, image in enumerate(images):
-            # Convertir imagen PIL a bytes
-            img_buffer = io.BytesIO()
-            image.save(img_buffer, format='JPEG', quality=85)
-            img_buffer.seek(0)
-            
-            # Crear imagen para ReportLab
-            img = RLImage(img_buffer, width=4*inch, height=3*inch)
-            story.append(Paragraph(f"<b>Imagen {i+1}:</b>", normal_style))
-            story.append(img)
-            story.append(Spacer(1, 10))
-    except Exception as e:
-        story.append(Paragraph(f"<i>Error al incluir imágenes: {str(e)}</i>", normal_style))
-    
-    story.append(Spacer(1, 15))
-    
-    # Resultados del diagnóstico
-    story.append(Paragraph("RESULTADOS DEL DIAGNÓSTICO", subtitle_style))
-    
-    diagnosis_text = f"""
-    <b>Diagnóstico:</b> {diagnosis_result['prediction']}<br/>
-    <b>Confianza del modelo:</b> {diagnosis_result['confidence']:.1f}%<br/>
-    <b>Nivel de severidad:</b> {diagnosis_result['severity']}/5
-    """
-    story.append(Paragraph(diagnosis_text, normal_style))
-    story.append(Spacer(1, 15))
-    
-    # Recomendaciones
-    story.append(Paragraph("RECOMENDACIONES MÉDICAS", subtitle_style))
-    for i, recommendation in enumerate(diagnosis_result['recommendations'], 1):
-        rec_text = f"{i}. {recommendation}"
-        story.append(Paragraph(rec_text, normal_style))
-    
-    story.append(Spacer(1, 20))
-    
-    # Pie de página
-    story.append(Paragraph("NOTA IMPORTANTE:", subtitle_style))
-    disclaimer = f"""
-    Este reporte es generado automáticamente por un sistema de inteligencia artificial 
-    y debe ser revisado por un profesional médico calificado. Los resultados son 
-    informativos y no constituyen un diagnóstico médico definitivo.
-    
-    <b>Reporte generado por:</b> SightTech - Sistema de Detección de Retinopatía Diabética<br/>
-    <b>Fecha:</b> {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}
-    """
-    story.append(Paragraph(disclaimer, normal_style))
-    
+            try:
+                buf = io.BytesIO()
+                image.save(buf, format='JPEG', quality=85)
+                buf.seek(0)
+                img_cells.append([
+                    Paragraph(f'<b>Imagen {i+1}</b>', lbl_style),
+                    RLImage(buf, width=2.8*inch, height=2.1*inch),
+                ])
+            except Exception:
+                pass
+        if img_cells:
+            img_tbl = Table(img_cells, colWidths=[0.7*inch, 3*inch])
+            img_tbl.setStyle(TableStyle([
+                ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+                ('BOTTOMPADDING', (0,0), (-1,-1), 8),
+            ]))
+            story.append(img_tbl)
+        story.append(Spacer(1, 10))
+
+    # ── SIGNATURE ───────────────────────────────────────────────────────
+    sig = Table([[
+        Paragraph(f'<b>{physician_name}</b><br/><font color="#6b7280" size="7.5">Médico Tratante</font>', styles['Normal']),
+        Paragraph('Generado por SightTech AI<br/>sighttech.mx', sig_r_style),
+    ]], colWidths=[3.5*inch, 3.5*inch])
+    sig.setStyle(TableStyle([
+        ('LINEABOVE',     (0,0), (0,0),   0.5, colors.HexColor('#d1d5db')),
+        ('ALIGN',         (1,0), (1,0),   'RIGHT'),
+        ('VALIGN',        (0,0), (-1,-1), 'TOP'),
+        ('TOPPADDING',    (0,0), (-1,-1), 6),
+    ]))
+    story.append(sig)
+    story.append(Spacer(1, 6))
+
+    # ── DISCLAIMER ──────────────────────────────────────────────────────
+    story.append(HRFlowable(width='100%', thickness=0.4, color=colors.HexColor('#e5e7eb')))
+    story.append(Spacer(1, 4))
+    story.append(Paragraph(
+        'Nota clínica: Este análisis es una herramienta de apoyo diagnóstico generada por IA. '
+        'El diagnóstico final y la decisión terapéutica son responsabilidad del médico tratante.',
+        note_style
+    ))
+
     doc.build(story)
     return pdf_path
 
@@ -603,7 +670,8 @@ def analyze_image():
         db.session.commit()
         
         # Crear PDF primero
-        pdf_path = create_pdf_report(patient_data, images, diagnosis_result)
+        physician_name = patient_data.get('physician_name', 'SightTech')
+        pdf_path = create_pdf_report(patient_data, images, diagnosis_result, physician_name)
         
         # Crear diagnóstico en BD
         diagnosis = Diagnosis(
@@ -902,33 +970,25 @@ def chat_with_ai():
 def init_db():
     with app.app_context():
         try:
-            # Eliminar tablas existentes si hay problemas
-            db.drop_all()
-            print("🗑️ Tablas anteriores eliminadas")
-            
-            # Crear nuevas tablas con la estructura actualizada
+            # Solo crea tablas si no existen — nunca borra datos existentes
             db.create_all()
-            print("✅ Base de datos inicializada correctamente con nueva estructura")
-            
-            # Verificar que las columnas se crearon correctamente
-            from sqlalchemy import inspect
-            inspector = inspect(db.engine)
-            patient_columns = [col['name'] for col in inspector.get_columns('patient')]
-            print(f"📋 Columnas de la tabla patient: {patient_columns}")
-            
-            # Generar datos de demo automáticamente SIEMPRE
-            try:
-                from generate_demo_data import generar_datos_demo
-                pacientes_creados, diagnosticos_creados = generar_datos_demo()
-                print(f"🎯 Datos de demo generados: {pacientes_creados} pacientes, {diagnosticos_creados} diagnósticos")
-            except Exception as e:
-                print(f"⚠️ No se pudieron generar datos de demo: {e}")
-                # Intentar generar datos básicos si falla
+            print("✅ Base de datos lista")
+
+            # Generar datos de demo solo si la BD está vacía (primer arranque)
+            if Patient.query.count() == 0:
                 try:
-                    generar_datos_basicos()
-                except:
-                    pass
-            
+                    from generate_demo_data import generar_datos_demo
+                    pacientes_creados, diagnosticos_creados = generar_datos_demo()
+                    print(f"🎯 Datos de demo generados: {pacientes_creados} pacientes, {diagnosticos_creados} diagnósticos")
+                except Exception as e:
+                    print(f"⚠️ No se pudieron generar datos de demo: {e}")
+                    try:
+                        generar_datos_basicos()
+                    except:
+                        pass
+            else:
+                print(f"📋 BD existente con {Patient.query.count()} pacientes — datos preservados")
+
         except Exception as e:
             print(f"❌ Error inicializando base de datos: {e}")
             raise e
