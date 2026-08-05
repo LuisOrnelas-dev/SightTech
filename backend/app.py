@@ -648,24 +648,24 @@ def analyze_image():
         # Procesar múltiples imágenes
         images = []
         image_paths = []
-        
+        filenames = []
+
         for i, image_file in enumerate(image_files):
             if image_file and image_file.filename:
                 image = Image.open(image_file.stream)
                 images.append(image)
-                
+                filenames.append(os.path.basename(image_file.filename).lower())
+
                 # Guardar imagen
                 timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
                 image_path = f"uploads/{timestamp}_{i}_{image_file.filename}"
                 os.makedirs('uploads', exist_ok=True)
                 image.save(image_path)
                 image_paths.append(image_path)
-        
+
         if not images:
             return jsonify({'error': 'No se pudieron procesar las imágenes'}), 400
-        
-        # Realizar predicción (pasar filenames para modo demo)
-        filenames = [f.filename for f in image_files if f and f.filename]
+
         diagnosis_result = predict_retinopathy(images, filenames=filenames)
         
         # Generar recomendaciones personalizadas con puntaje de riesgo
@@ -779,19 +779,31 @@ def dashboard():
     try:
         total_patients = Patient.query.count()
         total_diagnoses = Diagnosis.query.count()
-        
+
+        # Confianza promedio
+        avg_conf_raw = db.session.query(db.func.avg(Diagnosis.confidence)).scalar()
+        avg_confidence = round(float(avg_conf_raw), 1) if avg_conf_raw else 0
+
+        # Diagnósticos de hoy
+        today = datetime.utcnow().date()
+        today_diagnoses = Diagnosis.query.filter(
+            db.func.date(Diagnosis.created_at) == today
+        ).count()
+
         # Estadísticas por severidad
         severity_stats = db.session.query(
             Diagnosis.severity,
             db.func.count(Diagnosis.id)
         ).group_by(Diagnosis.severity).all()
-        
+
         # Diagnósticos recientes
         recent_diagnoses = Diagnosis.query.order_by(Diagnosis.created_at.desc()).limit(10).all()
-        
+
         return jsonify({
             'total_patients': total_patients,
             'total_diagnoses': total_diagnoses,
+            'today_diagnoses': today_diagnoses,
+            'avg_confidence': avg_confidence,
             'severity_stats': dict(severity_stats),
             'recent_diagnoses': [
                 {
