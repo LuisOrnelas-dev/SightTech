@@ -91,13 +91,15 @@ _DEMO_RESULTS = {
 }
 
 def _demo_key_from_filenames(filenames):
-    """Devuelve la clave demo si algún filename coincide, o None."""
+    """Devuelve la clave demo si el stem del filename coincide exactamente."""
     if not filenames:
         return None
-    joined = '_'.join(filenames).lower()
-    for key in _DEMO_RESULTS:
-        if key in joined:
-            return key
+    for fname in filenames:
+        stem = os.path.splitext(os.path.basename(fname))[0].lower().strip()
+        print(f"🔍 Demo key check: stem='{stem}'")
+        if stem in _DEMO_RESULTS:
+            print(f"✅ Demo key encontrada: '{stem}'")
+            return stem
     return None
 
 def predict_with_simulation(images, filenames=None):
