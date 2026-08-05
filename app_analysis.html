@@ -947,7 +947,10 @@
     }));
 
     // CHATBOT
-    document.getElementById('chatbot-toggle').addEventListener('click', () => { document.getElementById('chatbot-window').style.display = 'flex'; });
+    document.getElementById('chatbot-toggle').addEventListener('click', () => {
+        const w = document.getElementById('chatbot-window');
+        w.style.display = w.style.display === 'flex' ? 'none' : 'flex';
+    });
     document.getElementById('chatbot-close').addEventListener('click', () => { document.getElementById('chatbot-window').style.display = 'none'; });
     document.getElementById('chatbot-send').addEventListener('click', sendChat);
     document.getElementById('chatbot-input-field').addEventListener('keypress', e => { if (e.key === 'Enter') sendChat(); });
@@ -973,6 +976,5 @@
         msgs.scrollTop = msgs.scrollHeight;
     }
 </script>
-<script src="chatbot.js"></script>
 </body>
 </html>
