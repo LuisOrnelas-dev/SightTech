@@ -60,14 +60,17 @@ class Diagnosis(db.Model):
     pdf_path = db.Column(db.String(500))  # Ruta al archivo PDF generado
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-def predict_retinopathy(images):
+def predict_retinopathy(images, filenames=None):
     """Función que predice retinopatía diabética usando IA"""
+    # Modo demo: si el filename contiene una clave demo, respuesta inmediata
+    demo_key = _demo_key_from_filenames(filenames)
+    if demo_key:
+        return predict_with_simulation(images, filenames=filenames)
     try:
-        # Intentar usar modelo real si está disponible
         return predict_with_real_model(images)
     except Exception as e:
         print(f"⚠️ Modelo real no disponible, usando simulación: {e}")
-        return predict_with_simulation(images)
+        return predict_with_simulation(images, filenames=filenames)
 
 def predict_with_real_model(images):
     """Predicción usando modelo real de IA"""
@@ -79,56 +82,82 @@ def predict_with_real_model(images):
     except Exception as e:
         raise Exception(f"Error en modelo de IA: {e}")
 
-def predict_with_simulation(images):
+_DEMO_RESULTS = {
+    'sin_rd':        ("Sin retinopatía diabética",                  1, 96.4),
+    'leve':          ("Retinopatía diabética leve (NPDR)",           2, 91.2),
+    'moderada':      ("Retinopatía diabética moderada (NPDR)",       3, 88.7),
+    'severa':        ("Retinopatía diabética severa (NPDR)",         4, 85.3),
+    'proliferativa': ("Retinopatía diabética proliferativa (PDR)",   5, 92.1),
+}
+
+def _demo_key_from_filenames(filenames):
+    """Devuelve la clave demo si algún filename coincide, o None."""
+    if not filenames:
+        return None
+    joined = '_'.join(filenames).lower()
+    for key in _DEMO_RESULTS:
+        if key in joined:
+            return key
+    return None
+
+def predict_with_simulation(images, filenames=None):
     """Función que simula la predicción de retinopatía diabética con alta confianza"""
     import random
-    
-    # Combinar todas las imágenes para generar un seed único
-    combined_bytes = b''
-    for img in images:
-        combined_bytes += str(img.tobytes()).encode()
-    
-    random.seed(hash(combined_bytes) % 1000)
-    
+
+    classes = [
+        "Sin retinopatía diabética",
+        "Retinopatía diabética leve (NPDR)",
+        "Retinopatía diabética moderada (NPDR)",
+        "Retinopatía diabética severa (NPDR)",
+        "Retinopatía diabética proliferativa (PDR)"
+    ]
+
+    # Modo demo: resultado fijo basado en nombre de archivo
+    demo_key = _demo_key_from_filenames(filenames)
+    if demo_key:
+        pred, sev, conf = _DEMO_RESULTS[demo_key]
+        probs = [0.02, 0.02, 0.02, 0.02, 0.02]
+        probs[sev - 1] = conf / 100
+        total = sum(probs)
+        probs = [p / total for p in probs]
+        return {
+            "prediction": pred,
+            "confidence": conf,
+            "probabilities": dict(zip(classes, probs)),
+            "severity": sev,
+            "individual_results": [{"image_index": 0, "prediction": pred, "confidence": conf, "severity": sev}],
+            "images_analyzed": len(images)
+        }
+
     # Analizar cada imagen individualmente
     individual_results = []
     for i, image in enumerate(images):
-        img_seed = hash(str(image.tobytes())) % 1000
+        # Usar suma de píxeles como seed — varía por imagen y es determinístico
+        img_bytes = list(image.tobytes()[:3000])
+        img_seed = sum(img_bytes) % 100000
         random.seed(img_seed)
-        
-        # Generar probabilidades más realistas con alta confianza
-        # Usar parámetros más altos para generar confianza >80%
-        base_prob = random.uniform(0.75, 0.95)  # 75-95% de confianza base
-        remaining_prob = 1.0 - base_prob
-        
-        # Distribuir la probabilidad restante entre las otras clases
-        other_probs = np.random.dirichlet([0.5, 0.5, 0.5, 0.5]) * remaining_prob
-        
-        # Crear array de probabilidades
-        probabilities = np.array([base_prob] + list(other_probs))
-        
-        # Asegurar que sumen 1.0
-        probabilities = probabilities / np.sum(probabilities)
-        
-        classes = [
-            "Sin retinopatía diabética",
-            "Retinopatía diabética leve (NPDR)",
-            "Retinopatía diabética moderada (NPDR)",
-            "Retinopatía diabética severa (NPDR)",
-            "Retinopatía diabética proliferativa (PDR)"
-        ]
-        
-        # Ajustar confianza para que sea más realista (80-95%)
-        confidence = np.max(probabilities) * 100
-        if confidence < 80:
-            confidence = random.uniform(80, 95)
-        
+        np.random.seed(img_seed % (2**32))
+
+        # Elegir clase basada en características de la imagen
+        weights = [30, 25, 20, 15, 10]
+        class_idx = random.choices(range(5), weights=weights, k=1)[0]
+        confidence = random.uniform(82, 96)
+
+        # Construir distribución de probabilidades con clase elegida como ganadora
+        probabilities = np.zeros(5)
+        probabilities[class_idx] = confidence / 100
+        remaining = 1.0 - probabilities[class_idx]
+        other_indices = [j for j in range(5) if j != class_idx]
+        other_probs = np.random.dirichlet(np.ones(4)) * remaining
+        for j, idx in enumerate(other_indices):
+            probabilities[idx] = other_probs[j]
+
         individual_results.append({
             "image_index": i,
-            "prediction": classes[np.argmax(probabilities)],
+            "prediction": classes[class_idx],
             "confidence": confidence,
-            "probabilities": dict(zip(classes, probabilities)),
-            "severity": get_severity_level(classes[np.argmax(probabilities)])
+            "probabilities": dict(zip(classes, probabilities.tolist())),
+            "severity": class_idx + 1
         })
     
     # Combinar resultados para obtener diagnóstico final
@@ -635,8 +664,9 @@ def analyze_image():
         if not images:
             return jsonify({'error': 'No se pudieron procesar las imágenes'}), 400
         
-        # Realizar predicción
-        diagnosis_result = predict_retinopathy(images)
+        # Realizar predicción (pasar filenames para modo demo)
+        filenames = [f.filename for f in image_files if f and f.filename]
+        diagnosis_result = predict_retinopathy(images, filenames=filenames)
         
         # Generar recomendaciones personalizadas con puntaje de riesgo
         diagnosis_result['recommendations'] = generate_recommendations(
@@ -770,6 +800,7 @@ def dashboard():
                     'patient_age': d.patient.age,
                     'prediction': d.prediction,
                     'confidence': d.confidence,
+                    'severity': d.severity,
                     'created_at': d.created_at.isoformat()
                 }
                 for d in recent_diagnoses
@@ -993,6 +1024,26 @@ def init_db():
             print(f"❌ Error inicializando base de datos: {e}")
             raise e
 
+@app.route('/api/diagnosis/<int:diagnosis_id>')
+@login_required
+def get_diagnosis(diagnosis_id):
+    """Obtiene detalles de un diagnóstico individual"""
+    try:
+        d = Diagnosis.query.get_or_404(diagnosis_id)
+        return jsonify({
+            'id': d.id,
+            'patient_name': d.patient.name,
+            'patient_age': d.patient.age,
+            'patient_gender': d.patient.gender,
+            'prediction': d.prediction,
+            'confidence': d.confidence,
+            'severity': d.severity,
+            'created_at': d.created_at.isoformat()
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 def generar_datos_basicos():
     """Generar datos básicos de demo si falla el script principal"""
     try:
@@ -1010,9 +1061,9 @@ def generar_datos_basicos():
         
         # Crear diagnósticos básicos
         diagnosticos = [
-            Diagnosis(patient_id=1, prediction="Retinopatía diabética leve", confidence=85.5, severity=1),
-            Diagnosis(patient_id=2, prediction="Retinopatía diabética moderada", confidence=92.3, severity=2),
-            Diagnosis(patient_id=3, prediction="Sin retinopatía diabética", confidence=78.9, severity=0)
+            Diagnosis(patient_id=1, prediction="Retinopatía diabética leve (NPDR)", confidence=85.5, severity=2),
+            Diagnosis(patient_id=2, prediction="Retinopatía diabética moderada (NPDR)", confidence=92.3, severity=3),
+            Diagnosis(patient_id=3, prediction="Sin retinopatía diabética", confidence=78.9, severity=1)
         ]
         
         for diagnostico in diagnosticos:

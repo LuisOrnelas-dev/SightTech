@@ -274,11 +274,11 @@
             font-weight: 600;
             color: #fff;
         }
-        .severity-0 { background: #059669; }
-        .severity-1 { background: #d97706; }
-        .severity-2 { background: #ea580c; }
-        .severity-3 { background: #dc2626; }
-        .severity-4 { background: #7c3aed; }
+        .severity-1 { background: #059669; }
+        .severity-2 { background: #d97706; }
+        .severity-3 { background: #ea580c; }
+        .severity-4 { background: #dc2626; }
+        .severity-5 { background: #7c3aed; }
 
         .progress-wrap { min-width: 80px; }
         .progress-bar-bg {
@@ -538,6 +538,10 @@
     <script src="assets/js/i18n.js"></script>
     <script>
         let currentDiagnosisId = null;
+        let diagnosesCache = [];
+
+        const SEV_LABELS = {1:'Sin RD', 2:'Leve', 3:'Moderada', 4:'Severa', 5:'Proliferativa'};
+        const SEV_COLORS = {1:'#059669', 2:'#d97706', 3:'#ea580c', 4:'#dc2626', 5:'#7c3aed'};
 
         function checkAuth() {
             const isLoggedIn = localStorage.getItem('sighttech_logged_in');
@@ -561,14 +565,14 @@
         const DEMO_DATA = {
             total_patients: 8, total_diagnoses: 12, today_diagnoses: 3, avg_confidence: 92.4,
             recent_diagnoses: [
-                { id:1, patient_name:'María González López',  patient_age:58, prediction:'Retinopatía moderada',      confidence:91.2, severity:2, created_at: new Date().toISOString() },
-                { id:2, patient_name:'Carlos Mendoza Ruiz',   patient_age:48, prediction:'Sin retinopatía diabética', confidence:95.8, severity:0, created_at: new Date(Date.now()-3600000).toISOString() },
-                { id:3, patient_name:'Ana Rodríguez Silva',   patient_age:63, prediction:'Retinopatía severa',        confidence:88.5, severity:3, created_at: new Date(Date.now()-7200000).toISOString() },
-                { id:4, patient_name:'Roberto Silva Mora',    patient_age:65, prediction:'Retinopatía proliferativa', confidence:94.1, severity:4, created_at: new Date(Date.now()-86400000).toISOString() },
-                { id:5, patient_name:'Laura Martínez Pérez',  patient_age:52, prediction:'Retinopatía leve',          confidence:89.3, severity:1, created_at: new Date(Date.now()-172800000).toISOString() },
-                { id:6, patient_name:'José Hernández Cruz',   patient_age:71, prediction:'Retinopatía moderada',      confidence:92.7, severity:2, created_at: new Date(Date.now()-259200000).toISOString() },
-                { id:7, patient_name:'Patricia López Vega',   patient_age:44, prediction:'Sin retinopatía diabética', confidence:97.2, severity:0, created_at: new Date(Date.now()-345600000).toISOString() },
-                { id:8, patient_name:'Miguel Torres Díaz',    patient_age:67, prediction:'Retinopatía severa',        confidence:86.9, severity:3, created_at: new Date(Date.now()-432000000).toISOString() },
+                { id:1, patient_name:'María González López',  patient_age:58, prediction:'Retinopatía moderada',      confidence:91.2, severity:3, created_at: new Date().toISOString() },
+                { id:2, patient_name:'Carlos Mendoza Ruiz',   patient_age:48, prediction:'Sin retinopatía diabética', confidence:95.8, severity:1, created_at: new Date(Date.now()-3600000).toISOString() },
+                { id:3, patient_name:'Ana Rodríguez Silva',   patient_age:63, prediction:'Retinopatía severa',        confidence:88.5, severity:4, created_at: new Date(Date.now()-7200000).toISOString() },
+                { id:4, patient_name:'Roberto Silva Mora',    patient_age:65, prediction:'Retinopatía proliferativa', confidence:94.1, severity:5, created_at: new Date(Date.now()-86400000).toISOString() },
+                { id:5, patient_name:'Laura Martínez Pérez',  patient_age:52, prediction:'Retinopatía leve',          confidence:89.3, severity:2, created_at: new Date(Date.now()-172800000).toISOString() },
+                { id:6, patient_name:'José Hernández Cruz',   patient_age:71, prediction:'Retinopatía moderada',      confidence:92.7, severity:3, created_at: new Date(Date.now()-259200000).toISOString() },
+                { id:7, patient_name:'Patricia López Vega',   patient_age:44, prediction:'Sin retinopatía diabética', confidence:97.2, severity:1, created_at: new Date(Date.now()-345600000).toISOString() },
+                { id:8, patient_name:'Miguel Torres Díaz',    patient_age:67, prediction:'Retinopatía severa',        confidence:86.9, severity:4, created_at: new Date(Date.now()-432000000).toISOString() },
             ]
         };
 
@@ -597,6 +601,7 @@
         }
 
         function updatePatientsTable(diagnoses) {
+            diagnosesCache = diagnoses || [];
             const tbody = document.getElementById('patientsTable');
             if (!diagnoses || diagnoses.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">
@@ -620,7 +625,7 @@
                         <div class="diag-name">${d.prediction}</div>
                         <div class="diag-conf">${d.confidence}% confianza</div>
                     </td>
-                    <td><span class="badge severity-${d.severity}">Nivel ${d.severity}</span></td>
+                    <td><span class="badge severity-${d.severity}">${SEV_LABELS[d.severity] || 'N/A'}</span></td>
                     <td>
                         <div class="progress-wrap">
                             <div class="progress-bar-bg">
@@ -649,12 +654,55 @@
 
         function viewPatient(diagnosisId) {
             currentDiagnosisId = diagnosisId;
-            document.getElementById('patientModalBody').innerHTML = `
-                <div style="text-align:center;padding:2rem;color:#64748b;">
-                    <i class="fas fa-spinner fa-spin" style="font-size:1.5rem;color:#0ea5e9;"></i>
-                    <p style="margin-top:0.75rem;">Cargando información...</p>
-                </div>`;
             document.getElementById('modalOverlay').classList.add('open');
+
+            const d = diagnosesCache.find(x => x.id === diagnosisId);
+            if (!d) {
+                document.getElementById('patientModalBody').innerHTML =
+                    `<p style="text-align:center;padding:2rem;color:#64748b;">No se encontraron datos del paciente.</p>`;
+                return;
+            }
+
+            const sev = d.severity || 1;
+            const sevLabel = SEV_LABELS[sev] || 'Desconocido';
+            const sevColor = SEV_COLORS[sev] || '#059669';
+            const conf = typeof d.confidence === 'number' ? d.confidence.toFixed(1) : d.confidence;
+
+            const sevBar = [1,2,3,4,5].map(n => `
+                <div style="flex:1;padding:0.35rem 0;text-align:center;border-radius:6px;font-size:0.7rem;font-weight:600;
+                    background:${n <= sev ? sevColor : '#1a2535'};
+                    color:${n <= sev ? 'white' : '#475569'};">${SEV_LABELS[n]}</div>
+            `).join('');
+
+            document.getElementById('patientModalBody').innerHTML = `
+                <div style="display:flex;flex-direction:column;gap:1.1rem;">
+                    <div style="background:${sevColor};border-radius:12px;padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between;">
+                        <div>
+                            <div style="font-size:1.4rem;font-weight:700;color:white;">${sevLabel}</div>
+                            <div style="color:rgba(255,255,255,0.75);font-size:0.85rem;margin-top:2px;">${d.prediction}</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:1.6rem;font-weight:700;color:white;">${conf}%</div>
+                            <div style="color:rgba(255,255,255,0.7);font-size:0.75rem;">confianza</div>
+                        </div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+                        <div style="background:#0d1420;border:1px solid #1a2535;border-radius:10px;padding:0.9rem 1rem;">
+                            <div style="font-size:0.7rem;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Paciente</div>
+                            <div style="font-weight:600;color:#f1f5f9;">${d.patient_name}</div>
+                            <div style="color:#94a3b8;font-size:0.82rem;">${d.patient_age ?? '—'} años${d.patient_gender ? ' · ' + d.patient_gender : ''}</div>
+                        </div>
+                        <div style="background:#0d1420;border:1px solid #1a2535;border-radius:10px;padding:0.9rem 1rem;">
+                            <div style="font-size:0.7rem;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Fecha</div>
+                            <div style="font-weight:600;color:#f1f5f9;">${new Date(d.created_at).toLocaleDateString('es-MX', {day:'2-digit',month:'short',year:'numeric'})}</div>
+                            <div style="color:#94a3b8;font-size:0.82rem;">${new Date(d.created_at).toLocaleTimeString('es-MX', {hour:'2-digit',minute:'2-digit'})}</div>
+                        </div>
+                    </div>
+                    <div style="background:#0d1420;border:1px solid #1a2535;border-radius:10px;padding:0.9rem 1rem;">
+                        <div style="font-size:0.7rem;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Nivel de severidad (escala ICDRD)</div>
+                        <div style="display:flex;gap:6px;">${sevBar}</div>
+                    </div>
+                </div>`;
         }
 
         function closeModal() {

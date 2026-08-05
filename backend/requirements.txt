@@ -4,4 +4,7 @@ Flask-SQLAlchemy==3.1.1
 Pillow==10.4.0
 numpy==1.26.4
 reportlab==4.0.9
-tensorflow==2.15.0 
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.3.0+cpu
+torchvision==0.18.0+cpu
+huggingface_hub>=0.23.0
