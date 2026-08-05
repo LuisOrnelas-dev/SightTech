@@ -1025,7 +1025,6 @@ def init_db():
             raise e
 
 @app.route('/api/diagnosis/<int:diagnosis_id>')
-@login_required
 def get_diagnosis(diagnosis_id):
     """Obtiene detalles de un diagnóstico individual"""
     try:
